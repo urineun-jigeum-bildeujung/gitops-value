@@ -1,0 +1,14 @@
+image:
+  repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/product-service
+  tag: "latest" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+env:
+  - name: SPRING_PROFILES_ACTIVE
+    value: "dev"
