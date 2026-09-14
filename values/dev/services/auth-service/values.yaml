@@ -10,3 +10,22 @@ resources:
 env:
   - name: SPRING_PROFILES_ACTIVE
     value: "dev"
+  - name: SPRING_DATASOURCE_URL
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: SPRING_DATASOURCE_URL
+  - name: SPRING_DATASOURCE_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: SPRING_DATASOURCE_USERNAME
+  - name: SPRING_DATASOURCE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: SPRING_DATASOURCE_PASSWORD
+  # member-service.url 프로퍼티 오버라이드. Spring 환경변수 relaxed binding 규칙상
+  # 대시(-)는 더블 언더스코어(__)로 표현해야 함 (점 하나는 언더스코어 하나).
+  - name: MEMBER__SERVICE_URL
+    value: "http://generic-service.member-service.svc.cluster.local"
