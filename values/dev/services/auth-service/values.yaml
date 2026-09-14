@@ -25,7 +25,8 @@ env:
       secretKeyRef:
         name: db-credentials
         key: SPRING_DATASOURCE_PASSWORD
-  # member-service.url 프로퍼티 오버라이드. Spring 환경변수 relaxed binding 규칙상
-  # 대시(-)는 더블 언더스코어(__)로 표현해야 함 (점 하나는 언더스코어 하나).
-  - name: MEMBER__SERVICE_URL
+  # member-service.url 프로퍼티 오버라이드. SystemEnvironmentPropertySource는 점(.)과
+  # 대시(-) 둘 다 언더스코어 하나로 치환해서 매칭하므로 그냥 MEMBER_SERVICE_URL이 맞다
+  # (처음에 __로 시도했다가 실제 로그로 확인 후 정정, 2026-09-14).
+  - name: MEMBER_SERVICE_URL
     value: "http://generic-service.member-service.svc.cluster.local"
