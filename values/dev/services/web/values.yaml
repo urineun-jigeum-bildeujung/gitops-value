@@ -1,0 +1,19 @@
+image:
+  repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/web
+  tag: "latest" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi
+
+# Next.js standalone 서버가 3000번으로 뜬다 (차트 기본값 8080은 백엔드 서비스 기준).
+service:
+  targetPort: 3000
+
+# 차트 기본 ServiceMonitor는 /actuator/prometheus(Spring Boot 전용) 경로를 스크랩한다.
+# web은 그런 엔드포인트가 없어서 꺼둔다 — 프론트엔드용 메트릭이 생기면 그때 다시 켠다.
+metrics:
+  enabled: false
