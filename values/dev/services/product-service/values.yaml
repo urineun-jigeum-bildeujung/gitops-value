@@ -1,6 +1,6 @@
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/product-service
-  tag: "9f127d7edda1f85c4188e0951e2c6082ff76736b" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "12ade1b46e512d77a88f45b1393833f15bcc0f66" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 resources:
   requests:
     cpu: 100m
