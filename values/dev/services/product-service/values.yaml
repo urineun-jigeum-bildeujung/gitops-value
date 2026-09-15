@@ -27,3 +27,5 @@ env:
         key: SPRING_DATASOURCE_PASSWORD
   - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
     value: "pet-subscription-kafka-kafka-bootstrap.kafka.svc:9092"
+  - name: SPRING_KAFKA_CONSUMER_GROUP_ID
+    value: "product-service.inventory-consumer"
