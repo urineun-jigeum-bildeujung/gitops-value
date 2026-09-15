@@ -35,3 +35,8 @@ env:
       secretKeyRef:
         name: jwt-credentials
         key: JWT_RSA_PRIVATE_KEY
+  - name: INTERNAL_GATEWAY_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: gateway-secret
+        key: INTERNAL_GATEWAY_SECRET
