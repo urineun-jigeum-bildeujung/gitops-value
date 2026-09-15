@@ -40,3 +40,7 @@ env:
       secretKeyRef:
         name: gateway-secret
         key: INTERNAL_GATEWAY_SECRET
+  - name: JWT_EXPIRATION_ACCESS
+    value: "3600"
+  - name: JWT_EXPIRATION_REFRESH
+    value: "604800"
