@@ -10,6 +10,27 @@ resources:
 # Next.js standalone 서버가 3000번으로 뜬다 (차트 기본값 8080은 백엔드 서비스 기준).
 service:
   targetPort: 3000
+
+# Public frontend entrypoint. The AWS Load Balancer Controller creates the
+# internet-facing ALB; API Gateway can later join the same group with order 10.
+ingress:
+  enabled: true
+  className: alb
+  host: leechs.shop
+  path: /
+  pathType: Prefix
+  annotations:
+    alb.ingress.kubernetes.io/load-balancer-name: petflow-dev-public
+    alb.ingress.kubernetes.io/group.name: petflow-public
+    alb.ingress.kubernetes.io/group.order: "20"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:297165773875:certificate/38399d86-e76d-4323-9b3d-721b32acd2ce
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/success-codes: "200-399"
 # 차트 기본 ServiceMonitor는 /actuator/prometheus(Spring Boot 전용) 경로를 스크랩한다.
 # web은 그런 엔드포인트가 없어서 꺼둔다 — 프론트엔드용 메트릭이 생기면 그때 다시 켠다.
 metrics:
