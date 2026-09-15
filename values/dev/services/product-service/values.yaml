@@ -25,3 +25,5 @@ env:
       secretKeyRef:
         name: db-credentials
         key: SPRING_DATASOURCE_PASSWORD
+  - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+    value: "pet-subscription-kafka-kafka-bootstrap.kafka.svc:9092"
