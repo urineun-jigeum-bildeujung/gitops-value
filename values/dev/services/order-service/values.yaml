@@ -30,3 +30,10 @@ env:
       secretKeyRef:
         name: gateway-secret
         key: INTERNAL_GATEWAY_SECRET
+  # OTel Java agent 기본 프로토콜(http/protobuf)이 쓰는 포트 4318로 맞춤 — 4317은 gRPC용.
+  - name: OTEL_EXPORTER_OTLP_ENDPOINT
+    value: "http://tempo.observability.svc.cluster.local:4318"
+  - name: OTEL_METRICS_EXPORTER
+    value: "none"
+  - name: OTEL_LOGS_EXPORTER
+    value: "none"
