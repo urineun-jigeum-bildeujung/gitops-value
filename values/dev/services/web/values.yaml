@@ -1,6 +1,6 @@
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/web
-  tag: "fb0ef99d003d50a1cafdd9c93df9a9dd92596990" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "d519fba71f4029b92f8b0970cfbb2a0006768623" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 resources:
   requests:
     cpu: 100m
@@ -10,7 +10,6 @@ resources:
 # Next.js standalone 서버가 3000번으로 뜬다 (차트 기본값 8080은 백엔드 서비스 기준).
 service:
   targetPort: 3000
-
 # Public frontend entrypoint. The AWS Load Balancer Controller creates the
 # internet-facing ALB; API Gateway can later join the same group with order 10.
 ingress:
