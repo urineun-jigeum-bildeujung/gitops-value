@@ -44,6 +44,11 @@ env:
     value: "3600"
   - name: JWT_EXPIRATION_REFRESH
     value: "604800"
+  # 임시 추정값(2026-09-16) — 프론트엔드가 아직 /auth/callback 페이지를 안 만든 상태라
+  # 확정된 값 아님. web README(src/views/login/README.md)에 적힌 계획 경로를 그대로
+  # 가져다 씀. 소셜로그인 화면이 실제로 만들어지면 재확인 필요.
+  - name: OAUTH2_FRONTEND_REDIRECT_URI
+    value: "https://leechs.shop/auth/callback"
   # OTel Java agent 기본 프로토콜(http/protobuf)이 쓰는 포트 4318로 맞춤 — 4317은 gRPC용.
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
     value: "http://tempo.observability.svc.cluster.local:4318"
