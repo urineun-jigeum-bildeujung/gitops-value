@@ -56,3 +56,9 @@ env:
     value: "none"
   - name: OTEL_LOGS_EXPORTER
     value: "none"
+  # 로그-트레이스 상관연결용(2026-09-17). 기본 로그 패턴엔 trace_id가 안 찍혀서 Grafana에서
+  # 로그↔트레이스를 못 이어줬음. OTel Java agent가 MDC에 채워주는 trace_id/span_id를
+  # 로그 패턴에 노출 — Grafana Loki datasource의 derivedFields(matcherRegex)가 이 값을
+  # 찾아서 Tempo 링크를 만든다.
+  - name: LOGGING_PATTERN_LEVEL
+    value: "%5p [${spring.application.name},%X{trace_id:-},%X{span_id:-}]"
