@@ -38,6 +38,15 @@ env:
       secretKeyRef:
         name: gateway-secret
         key: INTERNAL_GATEWAY_SECRET
+  # spring.sql.init.mode: always가 application-local.yml에만 있어서(dev 프로필엔 없음),
+  # schema.sql(order_number_seq 시퀀스 생성)이 dev 클러스터에서 한 번도 실행 안 됐을
+  # 가능성이 높음 — Spring Boot 기본값은 외부 DB(Postgres 등)엔 schema.sql을 자동
+  # 실행하지 않음. OrderRepositoryAdapter.generateOrderNumber()가 nextval('order_number_seq')를
+  # 직접 호출하므로, 시퀀스가 없으면 주문 생성이 실패함(member-service breed_master와
+  # 동일 유형, 2026-09-17 코드 검토로 발견 — 클러스터 재기동 후 실제 검증 필요).
+  # schema.sql이 CREATE SEQUENCE IF NOT EXISTS라 매 재시작마다 실행돼도 안전함.
+  - name: SPRING_SQL_INIT_MODE
+    value: "always"
   # spring.data.redis.host/port 접속 정보가 application-local.yml에만 있어서(dev 프로필엔
   # 없음), 여기서 안 넘기면 기본값 localhost:6379로 접속을 시도하다 Connection refused ->
   # Redis 헬스 인디케이터 DOWN -> /actuator/health가 계속 503을 반환함(2026-09-17 Golden
