@@ -38,4 +38,4 @@ env:
     value: "none"
   # 로그-트레이스 상관연결용(2026-09-17, auth-service와 동일 이유).
   - name: LOGGING_PATTERN_LEVEL
-    value: "%5p [${spring.application.name},%X{trace_id:-},%X{span_id:-}]"
+    value: "%5p [${spring.application.name},trace_id=%X{trace_id:-},span_id=%X{span_id:-}]"

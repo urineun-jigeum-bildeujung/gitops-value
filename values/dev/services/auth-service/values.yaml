@@ -61,4 +61,4 @@ env:
   # 로그 패턴에 노출 — Grafana Loki datasource의 derivedFields(matcherRegex)가 이 값을
   # 찾아서 Tempo 링크를 만든다.
   - name: LOGGING_PATTERN_LEVEL
-    value: "%5p [${spring.application.name},%X{trace_id:-},%X{span_id:-}]"
+    value: "%5p [${spring.application.name},trace_id=%X{trace_id:-},span_id=%X{span_id:-}]"
