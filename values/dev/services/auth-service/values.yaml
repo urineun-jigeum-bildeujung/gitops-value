@@ -45,6 +45,14 @@ env:
     value: "3600"
   - name: JWT_EXPIRATION_REFRESH
     value: "604800"
+  # spring.data.redis.host/port 접속 정보가 application-local.yml에만 있어서(dev 프로필엔
+  # 없음), 여기서 안 넘기면 기본값 localhost:6379로 접속을 시도하다 Connection refused ->
+  # Redis 헬스 인디케이터 DOWN -> /actuator/health가 계속 503을 반환함(order-service와
+  # 동일 원인, 2026-09-17 발견 — auth-service는 OAuth2 크래시에 가려서 안 보였을 뿐).
+  - name: SPRING_DATA_REDIS_HOST
+    value: "redis-master.redis.svc.cluster.local"
+  - name: SPRING_DATA_REDIS_PORT
+    value: "6379"
   # 임시 추정값(2026-09-16) — 프론트엔드가 아직 /auth/callback 페이지를 안 만든 상태라
   # 확정된 값 아님. web README(src/views/login/README.md)에 적힌 계획 경로를 그대로
   # 가져다 씀. 소셜로그인 화면이 실제로 만들어지면 재확인 필요.
