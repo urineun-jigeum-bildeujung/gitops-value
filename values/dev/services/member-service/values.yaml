@@ -1,6 +1,12 @@
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/member-service
   tag: "e0541aeeeb39e40aec9b5f630a2e3d2da50cd9aa" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+# 서비스 간 mTLS 5단계(2026-09-18). member-service -> auth-service Feign 호출(AuthClient)이
+# 실제로 있어서 order-service와 달리 sever #73(Feign 클라이언트 mTLS 설정) 머지 및 재배포가
+# 선행되어야 함 — auth-service의 mtls.enabled와 반드시 같은 타이밍에 켜져야 함(자세한 이유는
+# auth-service/values.yaml 주석 참고).
+mtls:
+  enabled: true
 resources:
   requests:
     cpu: 100m
@@ -29,7 +35,7 @@ env:
   # auth-service.url 프로퍼티 오버라이드. auth-service의 MEMBER_SERVICE_URL과 동일한
   # 패턴 — 점(.)과 대시(-)는 언더스코어 하나로 치환되어 매칭된다.
   - name: AUTH_SERVICE_URL
-    value: "http://generic-service.auth-service.svc.cluster.local"
+    value: "https://generic-service.auth-service.svc.cluster.local:8443"
   - name: INTERNAL_GATEWAY_SECRET
     valueFrom:
       secretKeyRef:
