@@ -1,6 +1,6 @@
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/order-service
-  tag: "a8544e39fcf35aff39432a01018ca8d44e08f55d" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "e0541aeeeb39e40aec9b5f630a2e3d2da50cd9aa" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 # 서비스 간 mTLS 4단계 검증 대상(2026-09-17). order-service는 Feign으로 다른 서비스를
 # 호출하는 코드가 없어서 sever #73(Feign 클라이언트 mTLS 설정) 머지를 기다릴 필요
 # 없이 먼저 켤 수 있음 — server.ssl.*/spring.ssl.bundle.pem.*는 Spring Boot 자체
