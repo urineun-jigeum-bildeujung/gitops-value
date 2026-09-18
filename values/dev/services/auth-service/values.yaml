@@ -147,7 +147,10 @@ mtls:
 # replicaCount 4 - 기본값 1로는 active/preview 전환 과정이 눈에 안 보임(문서에
 # 명시된 사전 준비 항목). 클러스터 CPU 여유가 빠듯해서(2026-09-18 확인) 문서
 # 권장값(5~10)보다 낮춤 - payment-service와 합쳐 CPU 600m로 여유 480m를 남김.
-replicaCount: 4
+# 긴급 원복(2026-09-18) - 노드 장애 복구 중 Kafka 브로커가 클러스터 CPU 부족으로
+# 스케줄 자체가 안 되는 상황 발생해서 급하게 1로 되돌림. 블루그린 시연 재개 시
+# 다시 필요한 만큼만 올릴 것.
+replicaCount: 1
 blueGreen:
   enabled: true
   autoPromotionEnabled: false
