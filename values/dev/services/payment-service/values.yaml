@@ -161,6 +161,13 @@ env:
   # 시연 끝나면 원래 secretKeyRef로 되돌릴 것.
   - name: SPRING_DATASOURCE_URL
     value: "jdbc:postgresql://nonexistent-host.invalid:5432/broken"
+  # initialization-fail-timeout: -1 - 부팅 시점 첫 DB 연결 실패해도 앱 컨텍스트를
+  # 죽이지 않고 계속 뜨게 함(2026-09-18, 1차 시도에서 DB 연결 실패가 앱 전체를
+  # 크래시시켜 HTTP 레벨 5xx가 전혀 안 잡히고 crash-loop만 반복되는 걸 실제로 확인
+  # 후 추가). 앱은 떠있고 /actuator/health가 매번 DB 헬스체크에 실패해 503을
+  # 응답하게 만드는 게 목적 - 그래야 AnalysisTemplate이 5xx로 감지 가능.
+  - name: SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT
+    value: "-1"
   - name: SPRING_DATASOURCE_USERNAME
     valueFrom:
       secretKeyRef:
