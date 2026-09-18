@@ -41,6 +41,11 @@ env:
   # ([[project_petflow_temp_placeholder_values]] 참고).
   - name: TOSS_SECRET_KEY
     value: "test_sk_D5GePWvyJnrK0W0k6q8gLzN97Eoq"
+  # toss-payments.base-url도 위와 같은 이유로 dev 프로필엔 없음 - TossPaymentProperties의
+  # https:// 검증에 걸려 secret-key만으로는 안 풀리고 이 값도 같이 필요함
+  # (2026-09-18, TOSS_SECRET_KEY 추가 후 재검증 중 새로 드러남).
+  - name: TOSS_PAYMENTS_BASE_URL
+    value: "https://api.tosspayments.com"
   # spring.kafka.bootstrap-servers 기본값이 localhost:9092라 크래시는 안 하지만, 이 값을
   # 안 넘기면 결제 완료/실패 이벤트가 실제로 발행되지 않고 조용히 로컬 연결 실패함.
   # order-service/product-service와 동일한 평문 9092 리스너.
