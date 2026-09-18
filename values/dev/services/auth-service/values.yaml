@@ -47,20 +47,6 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8443
-    # 블루그린 롤백 시연용 부하 생성 파드 임시 허용(2026-09-18, canary-bluegreen-rollback-scenario.md
-    # 실행 단계) - 데모 끝나면 제거할 것. 같은 네임스페이스 내 app: load-test 라벨 파드만 허용.
-    # auth-service는 mtls.enabled라 8080도 클라이언트 인증서 요구할 가능성 있음
-    # (order-service에서 2026-09-18에 실제 확인된 동작) - 8443도 같이 열어둠.
-    - from:
-        - podSelector:
-            matchLabels:
-              app: load-test
-      ports:
-        - protocol: TCP
-          port: 8080
-        - protocol: TCP
-          port: 8443
-
   # 내부 경로만 명시한다. 외부 HTTPS는 externalEgress 전용 프록시로만 허용한다.
   egress:
     - to:
@@ -139,13 +125,9 @@ mtls:
 # 갑자기 로그아웃되는 사고로 이어질 수 있음. 그래서 전체를 한 번에 전환하고
 # 문제 생기면 즉시 전체를 되돌리는 블루그린이 맞음. autoPromotionEnabled: false로
 # preview 검증 후 수동 promote/abort를 시연한다.
-# replicaCount 4 - 기본값 1로는 active/preview 전환 과정이 눈에 안 보임(문서에
-# 명시된 사전 준비 항목). 클러스터 CPU 여유가 빠듯해서(2026-09-18 확인) 문서
-# 권장값(5~10)보다 낮춤 - payment-service와 합쳐 CPU 600m로 여유 480m를 남김.
-# 블루그린 시연 재개, 2차 조정(2026-09-18) - 4로 올렸더니 preview+active 8개 동시
-# 스케줄 요구로 클러스터가 다시 CPU 96%/Too many pods까지 몰림. 2(=preview+active 4개)로
-# 낮춤 - active/preview 전환 확인엔 2개로도 충분하고, 한 번 크게 겪은 뒤라 여유를 둠.
-replicaCount: 2
+# 시연 완료 후 원복(2026-09-18) - 시연 중엔 active/preview 전환이 보이도록 2~4로
+# 올렸었음. blueGreen.enabled 자체는 GitOps+카나리 미션 요구사항 증빙 목적으로 유지.
+replicaCount: 1
 blueGreen:
   enabled: true
   autoPromotionEnabled: false
@@ -190,10 +172,8 @@ env:
       secretKeyRef:
         name: gateway-secret
         key: INTERNAL_GATEWAY_SECRET
-  # 블루그린 롤백(abort) 시연용 새 리비전 트리거(2026-09-18) - 값 자체엔 의미 없음, preview
-  # 재생성만 목적. 시연 끝나면 3600으로 되돌릴 것.
   - name: JWT_EXPIRATION_ACCESS
-    value: "3601"
+    value: "3600"
   - name: JWT_EXPIRATION_REFRESH
     value: "604800"
   # spring.data.redis.host/port 접속 정보가 application-local.yml에만 있어서(dev 프로필엔

@@ -32,15 +32,6 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8080
-    # 카나리 롤백 시연용 부하 생성 파드 임시 허용(2026-09-18, canary-bluegreen-rollback-scenario.md
-    # 실행 단계) - 데모 끝나면 제거할 것. 같은 네임스페이스 내 app: load-test 라벨 파드만 허용.
-    - from:
-        - podSelector:
-            matchLabels:
-              app: load-test
-      ports:
-        - protocol: TCP
-          port: 8080
   # 내부 경로만 명시한다. 외부 HTTPS는 externalEgress 전용 프록시로만 허용한다.
   egress:
     - to:
