@@ -124,6 +124,21 @@ image:
 # 없는 쪽으로 https 호출 시 연결 실패).
 mtls:
   enabled: true
+# 카나리/블루그린 롤백 시연(2026-09-18, gitops/docs/canary-bluegreen-rollback-scenario.md
+# 설계 문서 실행 단계). auth-service는 반대로 신구 버전이 트래픽을 나눠 받는
+# "혼재 상태" 자체가 위험 - 어떤 유저는 구버전 토큰 형식으로, 어떤 유저는 신버전
+# 형식으로 세션이 생기면 이후 요청이 다른 버전 서버로 튈 때 토큰 검증 불일치로
+# 갑자기 로그아웃되는 사고로 이어질 수 있음. 그래서 전체를 한 번에 전환하고
+# 문제 생기면 즉시 전체를 되돌리는 블루그린이 맞음. autoPromotionEnabled: false로
+# preview 검증 후 수동 promote/abort를 시연한다.
+# replicaCount 4 - 기본값 1로는 active/preview 전환 과정이 눈에 안 보임(문서에
+# 명시된 사전 준비 항목). 클러스터 CPU 여유가 빠듯해서(2026-09-18 확인) 문서
+# 권장값(5~10)보다 낮춤 - payment-service와 합쳐 CPU 600m로 여유 480m를 남김.
+replicaCount: 4
+blueGreen:
+  enabled: true
+  autoPromotionEnabled: false
+  scaleDownDelaySeconds: 30
 resources:
   requests:
     cpu: 100m
