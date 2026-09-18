@@ -39,7 +39,7 @@ env:
   # 임시값 - 토스페이먼츠가 공개 문서에 배포한 샌드박스 공용 테스트 시크릿 키
   # (누구나 결제 승인 테스트 가능, 실결제 불가). 팀 전용 실제 키 발급되면 교체 필요
   # ([[project_petflow_temp_placeholder_values]] 참고).
-  - name: TOSS_SECRET_KEY
+  - name: TOSS_PAYMENTS_SECRET_KEY
     value: "test_sk_D5GePWvyJnrK0W0k6q8gLzN97Eoq"
   # toss-payments.base-url도 위와 같은 이유로 dev 프로필엔 없음 - TossPaymentProperties의
   # https:// 검증에 걸려 secret-key만으로는 안 풀리고 이 값도 같이 필요함
