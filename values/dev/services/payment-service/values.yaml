@@ -115,7 +115,7 @@ networkPolicy:
 
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/payment-service
-  tag: "1324695ac090e33fad5b478986b62f81fcf5d873" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "35d07c5d922e1e8e714e78a58afaddd4806066b4" # 카나리 정상 승급 시연용 태그 변경(2026-09-18) - ECR에 이미 있는 이전 정상 빌드로 전환
 # 카나리/블루그린 롤백 시연(2026-09-18, gitops/docs/canary-bluegreen-rollback-scenario.md
 # 설계 문서 실행 단계). payment-service는 잘못된 배포의 피해가 되돌릴 수 없는
 # 성격(중복결제/정산오류)이라 카나리로 블래스트 레디어스를 최소화 - 문제를 트래픽
