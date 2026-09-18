@@ -3,7 +3,6 @@ externalEgress:
   runtime: java
   allowedDomains:
     - "api.tosspayments.com"
-
 # 내부 Ingress/Egress 제한. mTLS・SASL 설정은 변경하지 않는다.
 networkPolicy:
   enabled: true
@@ -106,7 +105,7 @@ networkPolicy:
           port: 8443
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/payment-service
-  tag: "35d07c5d922e1e8e714e78a58afaddd4806066b4" # 재원복(2026-09-18) - 수동으로 원복했었는데, 오래 걸리던 Jenkins 빌드(#94)가 뒤늦게 완료되면서 jenkins-ci 자동 GitOps 커밋(e693da0)이 강제 503 태그로 다시 덮어씀. 시연용 임시 코드가 배포 태그로 자동 반영되는 건 원래 CI 정상 동작이라, 시연 끝나면 sever #94의 CanaryDemoHealthIndicator 자체를 revert하는 PR을 올려야 함(단순 태그 원복은 다음 Jenkins 빌드가 다시 덮어씀).
+  tag: "4660ef826616e3e44b6d49bbfc7bb6e0c6559505" # 재원복(2026-09-18) - 수동으로 원복했었는데, 오래 걸리던 Jenkins 빌드(#94)가 뒤늦게 완료되면서 jenkins-ci 자동 GitOps 커밋(e693da0)이 강제 503 태그로 다시 덮어씀. 시연용 임시 코드가 배포 태그로 자동 반영되는 건 원래 CI 정상 동작이라, 시연 끝나면 sever #94의 CanaryDemoHealthIndicator 자체를 revert하는 PR을 올려야 함(단순 태그 원복은 다음 Jenkins 빌드가 다시 덮어씀).
 # 카나리/블루그린 롤백 시연(2026-09-18, gitops/docs/canary-bluegreen-rollback-scenario.md
 # 설계 문서 실행 단계). payment-service는 잘못된 배포의 피해가 되돌릴 수 없는
 # 성격(중복결제/정산오류)이라 카나리로 블래스트 레디어스를 최소화 - 문제를 트래픽
