@@ -1,3 +1,55 @@
+# 내부 Ingress/Egress 제한. Public ALB → Next.js 3000 및 예정 Gateway 호출 유지.
+networkPolicy:
+  enabled: true
+  namespaceDefaultDeny: true
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: "10.0.0.0/24"
+        - ipBlock:
+            cidr: "10.0.1.0/24"
+      ports:
+        - protocol: "TCP"
+          port: 3000
+  # 외부 API/S3는 임시 유지하되 내부·링크로컬 주소는 이 예외에서 제외한다.
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "kube-system"
+          podSelector:
+            matchLabels:
+              k8s-app: "kube-dns"
+      ports:
+        - protocol: "UDP"
+          port: 53
+        - protocol: "TCP"
+          port: 53
+    - to:
+        - ipBlock:
+            cidr: "0.0.0.0/0"
+            except:
+              - "0.0.0.0/8"
+              - "10.0.0.0/8"
+              - "100.64.0.0/10"
+              - "127.0.0.0/8"
+              - "169.254.0.0/16"
+              - "172.16.0.0/12"
+              - "192.168.0.0/16"
+              - "224.0.0.0/4"
+              - "240.0.0.0/4"
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "api-gateway"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-api-gateway"
+      ports:
+        - protocol: "TCP"
+          port: 8080
+
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/web
   tag: "bc68d33bc9633b9fcc94f9985d9421f449ab4564" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
