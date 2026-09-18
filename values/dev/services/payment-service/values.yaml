@@ -1,3 +1,109 @@
+# 내부 Ingress/Egress 제한. mTLS・SASL 설정은 변경하지 않는다.
+networkPolicy:
+  enabled: true
+  namespaceDefaultDeny: true
+  ingress:
+    # 예정된 Gateway 배포는 아래 Namespace/라벨을 사용해야 한다.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: api-gateway
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: generic-service
+              app.kubernetes.io/instance: dev-api-gateway
+      ports:
+        - protocol: TCP
+          port: 8080
+    # 메트릭 수집은 Prometheus Pod만 관리/API 포트에 접근하도록 허용한다.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: observability
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+              app.kubernetes.io/instance: kube-prometheus-stack-prometheus
+      ports:
+        - protocol: TCP
+          port: 8080
+
+  # 외부 API/S3는 임시 유지하되 내부·링크로컬 주소는 이 예외에서 제외한다.
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "kube-system"
+          podSelector:
+            matchLabels:
+              k8s-app: "kube-dns"
+      ports:
+        - protocol: "UDP"
+          port: 53
+        - protocol: "TCP"
+          port: 53
+    - to:
+        - ipBlock:
+            cidr: "0.0.0.0/0"
+            except:
+              - "0.0.0.0/8"
+              - "10.0.0.0/8"
+              - "100.64.0.0/10"
+              - "127.0.0.0/8"
+              - "169.254.0.0/16"
+              - "172.16.0.0/12"
+              - "192.168.0.0/16"
+              - "224.0.0.0/4"
+              - "240.0.0.0/4"
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "observability"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "tempo"
+              app.kubernetes.io/instance: "tempo"
+      ports:
+        - protocol: "TCP"
+          port: 4318
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "database"
+          podSelector:
+            matchLabels:
+              cnpg.io/cluster: "petflow-db"
+              cnpg.io/instanceRole: "primary"
+      ports:
+        - protocol: "TCP"
+          port: 5432
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "kafka"
+          podSelector:
+            matchLabels:
+              strimzi.io/cluster: "pet-subscription-kafka"
+              strimzi.io/name: "pet-subscription-kafka-kafka"
+              strimzi.io/kind: "Kafka"
+              strimzi.io/broker-role: "true"
+      ports:
+        - protocol: "TCP"
+          port: 9092
+        - protocol: "TCP"
+          port: 9093
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "order-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-order-service"
+      ports:
+        - protocol: "TCP"
+          port: 8443
+
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/payment-service
   tag: "35d07c5d922e1e8e714e78a58afaddd4806066b4" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
