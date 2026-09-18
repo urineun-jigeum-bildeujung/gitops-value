@@ -46,6 +46,12 @@ env:
   # SASL(6단계, 미착수)이 반영되면 그때 9093/SASL 값으로 갱신할 것.
   - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
     value: "pet-subscription-kafka-kafka-bootstrap.kafka.svc:9092"
+  # spring.kafka.consumer.group-id도 위와 같은 이유(application-local.yml에만 있고
+  # dev 프로필엔 없음)로 KafkaConsumerConfig의 @Value 주입이 실패해 부팅이 죽음
+  # (2026-09-18, bootstrap-servers 수정 후 재검증 중 새로 드러남). product-service의
+  # SPRING_KAFKA_CONSUMER_GROUP_ID와 같은 명명 규칙을 따름.
+  - name: SPRING_KAFKA_CONSUMER_GROUP_ID
+    value: "order-service.order-status-consumer"
   # spring.sql.init.mode: always가 application-local.yml에만 있어서(dev 프로필엔 없음),
   # schema.sql(order_number_seq 시퀀스 생성)이 dev 클러스터에서 한 번도 실행 안 됐을
   # 가능성이 높음 — Spring Boot 기본값은 외부 DB(Postgres 등)엔 schema.sql을 자동
