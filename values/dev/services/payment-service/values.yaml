@@ -107,6 +107,23 @@ networkPolicy:
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/payment-service
   tag: "1324695ac090e33fad5b478986b62f81fcf5d873" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+# 카나리/블루그린 롤백 시연(2026-09-18, gitops/docs/canary-bluegreen-rollback-scenario.md
+# 설계 문서 실행 단계). payment-service는 잘못된 배포의 피해가 되돌릴 수 없는
+# 성격(중복결제/정산오류)이라 카나리로 블래스트 레디어스를 최소화 - 문제를 트래픽
+# 일부에서만 조기에 잡고 나머지는 구버전으로 안전하게 지킴.
+# replicaCount 6 - 기본값 1로는 20%/50% 단계별 비율이 실제로 의미 없어짐(문서에
+# 명시된 사전 준비 항목).
+replicaCount: 6
+canary:
+  enabled: true
+  analysis:
+    enabled: true
+  steps:
+    - setWeight: 20
+    - pause: { duration: 60 }
+    - setWeight: 50
+    - pause: { duration: 60 }
+    - setWeight: 100
 # Kafka SASL 6단계(2026-09-18). generic-service 차트의 kafka.sasl.enabled를 켜면
 # SPRING_KAFKA_SECURITY_PROTOCOL 등 5개 SASL env(kafkaSaslEnv 템플릿)가 자동
 # 주입됨 - 여기서 직접 넣을 필요 없음. 아래 SPRING_KAFKA_BOOTSTRAP_SERVERS만
