@@ -181,18 +181,20 @@ env:
   # 가져다 씀. 소셜로그인 화면이 실제로 만들어지면 재확인 필요.
   - name: OAUTH2_FRONTEND_REDIRECT_URI
     value: "https://leechs.shop/auth/callback"
-  # 임시값(2026-09-18) — 카카오/구글 OAuth2 client-id/secret이 아직 실제로 발급/등록되지
-  # 않은 상태. application-local.yml에만 이 값들이 있고 dev 프로필엔 없어서
-  # ClientRegistrationRepository 빈을 못 만들어 매 부팅마다 크래시했음(SecurityConfig가
-  # .oauth2Login(...)을 무조건 걸어놔서 회피 불가). Spring은 부팅 시점엔 client-id/secret이
-  # "진짜 유효한지"는 검증하지 않고 문자열만 있으면 빈을 만들어주므로, mTLS 검증 등 다른
-  # 작업을 진행할 수 있게 크래시만 우선 해소하는 더미값. 실제 카카오/구글 로그인은 이
-  # 값으로는 동작하지 않음 — 실제 앱 등록 후 반드시 교체 필요
-  # ([[project_petflow_temp_placeholder_values]] 참고).
+  # 카카오/구글 OAuth2 실제 client-id/secret(2026-09-18). gitops PR(oauth2-credentials
+  # ExternalSecret)로 AWS Secrets Manager(petflow/auth-service/oauth2-kakao,
+  # oauth2-google)에서 가져옴 - git엔 실제 값이 남지 않음. 기존 placeholder-*
+  # 더미값(2026-09-18 크래시 해소용)을 실제 앱 등록값으로 교체.
   - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_ID
-    value: "placeholder-kakao-client-id"
+    valueFrom:
+      secretKeyRef:
+        name: oauth2-credentials
+        key: KAKAO_CLIENT_ID
   - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_SECRET
-    value: "placeholder-kakao-client-secret"
+    valueFrom:
+      secretKeyRef:
+        name: oauth2-credentials
+        key: KAKAO_CLIENT_SECRET
   - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI
     value: "https://leechs.shop/api/auth/login/oauth2/code/kakao"
   - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_AUTHORIZATION_GRANT_TYPE
@@ -210,11 +212,18 @@ env:
   - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KAKAO_USER_NAME_ATTRIBUTE
     value: "id"
   # google은 Spring Security 내장 CommonOAuth2Provider라 provider.* 없이 client-id/secret만
-  # 있으면 authorization-uri 등이 자동으로 채워짐.
+  # 있으면 authorization-uri 등이 자동으로 채워짐. 카카오와 동일하게 oauth2-credentials
+  # ExternalSecret에서 가져옴(2026-09-18).
   - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID
-    value: "placeholder-google-client-id"
+    valueFrom:
+      secretKeyRef:
+        name: oauth2-credentials
+        key: GOOGLE_CLIENT_ID
   - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET
-    value: "placeholder-google-client-secret"
+    valueFrom:
+      secretKeyRef:
+        name: oauth2-credentials
+        key: GOOGLE_CLIENT_SECRET
   - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI
     value: "https://leechs.shop/api/auth/login/oauth2/code/google"
   - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_AUTHORIZATION_GRANT_TYPE
