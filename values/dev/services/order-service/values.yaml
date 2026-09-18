@@ -138,6 +138,14 @@ image:
 # 막고 있는지만 검증하는 단계.
 mtls:
   enabled: true
+# Kafka SASL 6단계(2026-09-18). generic-service 차트의 kafka.sasl.enabled를 켜면
+# SPRING_KAFKA_SECURITY_PROTOCOL 등 5개 SASL env(kafkaSaslEnv 템플릿)가 자동
+# 주입됨 - 여기서 직접 넣을 필요 없음. 아래 SPRING_KAFKA_BOOTSTRAP_SERVERS만
+# 9093(SASL 리스너)로 같이 바꿔야 함(9092 평문 리스너로는 SASL 핸드셰이크 자체가
+# 안 됨).
+kafka:
+  sasl:
+    enabled: true
 resources:
   requests:
     cpu: 100m
@@ -172,10 +180,9 @@ env:
   # 없음), PaymentResultConsumer/KafkaProducerConfig가 이 프로퍼티를 못 찾아
   # PlaceholderResolutionException으로 부팅 자체가 실패함(2026-09-18, 클러스터 복구
   # 후 실제 크래시로 발견 — member-service breed_master, order_number_seq와 동일
-  # 유형의 반복 버그). product-service와 동일한 평문 9092 리스너를 가리킴 - Kafka
-  # SASL(6단계, 미착수)이 반영되면 그때 9093/SASL 값으로 갱신할 것.
+  # 유형의 반복 버그). Kafka SASL 6단계(2026-09-18) 반영으로 9093(SASL 리스너)로 갱신.
   - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
-    value: "pet-subscription-kafka-kafka-bootstrap.kafka.svc:9092"
+    value: "pet-subscription-kafka-kafka-bootstrap.kafka.svc:9093"
   # spring.kafka.consumer.group-id도 위와 같은 이유(application-local.yml에만 있고
   # dev 프로필엔 없음)로 KafkaConsumerConfig의 @Value 주입이 실패해 부팅이 죽음
   # (2026-09-18, bootstrap-servers 수정 후 재검증 중 새로 드러남). product-service의

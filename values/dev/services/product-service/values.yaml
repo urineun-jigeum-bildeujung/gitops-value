@@ -108,6 +108,13 @@ networkPolicy:
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/product-service
   tag: "f4328cf372a61f85fcc41f613f49ad4000b4a59b" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+# Kafka SASL 6단계(2026-09-18). generic-service 차트의 kafka.sasl.enabled를 켜면
+# SPRING_KAFKA_SECURITY_PROTOCOL 등 5개 SASL env(kafkaSaslEnv 템플릿)가 자동
+# 주입됨 - 여기서 직접 넣을 필요 없음. 아래 SPRING_KAFKA_BOOTSTRAP_SERVERS만
+# 9093(SASL 리스너)로 같이 바꿔야 함.
+kafka:
+  sasl:
+    enabled: true
 resources:
   requests:
     cpu: 100m
@@ -133,8 +140,9 @@ env:
       secretKeyRef:
         name: db-credentials
         key: SPRING_DATASOURCE_PASSWORD
+  # Kafka SASL 6단계(2026-09-18) 반영으로 9093(SASL 리스너)로 갱신.
   - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
-    value: "pet-subscription-kafka-kafka-bootstrap.kafka.svc:9092"
+    value: "pet-subscription-kafka-kafka-bootstrap.kafka.svc:9093"
   - name: SPRING_KAFKA_CONSUMER_GROUP_ID
     value: "product-service.inventory-consumer"
   # OTel Java agent 기본 프로토콜(http/protobuf)이 쓰는 포트 4318로 맞춤 — 4317은 gRPC용.
