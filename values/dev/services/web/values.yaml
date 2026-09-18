@@ -49,10 +49,9 @@ networkPolicy:
       ports:
         - protocol: "TCP"
           port: 8080
-
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/web
-  tag: "bc68d33bc9633b9fcc94f9985d9421f449ab4564" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "da2fc6a6730c42b4252e06f578cbfefcbc1df2bf" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 resources:
   requests:
     cpu: 100m
