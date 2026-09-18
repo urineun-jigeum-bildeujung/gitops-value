@@ -106,7 +106,7 @@ networkPolicy:
           port: 8443
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/payment-service
-  tag: "4a642dd1341288f075a9170535ac832b09ce39d7" # 긴급 원복(2026-09-18) - 강제 503 이미지가 자동 감지 실패(부팅 61초 vs 분석 윈도 타이밍 문제)로 100% stable까지 승급돼버려서 정상 이미지로 즉시 되돌림
+  tag: "35d07c5d922e1e8e714e78a58afaddd4806066b4" # 재원복(2026-09-18) - 수동으로 원복했었는데, 오래 걸리던 Jenkins 빌드(#94)가 뒤늦게 완료되면서 jenkins-ci 자동 GitOps 커밋(e693da0)이 강제 503 태그로 다시 덮어씀. 시연용 임시 코드가 배포 태그로 자동 반영되는 건 원래 CI 정상 동작이라, 시연 끝나면 sever #94의 CanaryDemoHealthIndicator 자체를 revert하는 PR을 올려야 함(단순 태그 원복은 다음 Jenkins 빌드가 다시 덮어씀).
 # 카나리/블루그린 롤백 시연(2026-09-18, gitops/docs/canary-bluegreen-rollback-scenario.md
 # 설계 문서 실행 단계). payment-service는 잘못된 배포의 피해가 되돌릴 수 없는
 # 성격(중복결제/정산오류)이라 카나리로 블래스트 레디어스를 최소화 - 문제를 트래픽
