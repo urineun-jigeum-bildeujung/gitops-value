@@ -39,6 +39,19 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8443
+    # 블루그린 롤백 시연용 부하 생성 파드 임시 허용(2026-09-18, canary-bluegreen-rollback-scenario.md
+    # 실행 단계) - 데모 끝나면 제거할 것. 같은 네임스페이스 내 app: load-test 라벨 파드만 허용.
+    # auth-service는 mtls.enabled라 8080도 클라이언트 인증서 요구할 가능성 있음
+    # (order-service에서 2026-09-18에 실제 확인된 동작) - 8443도 같이 열어둠.
+    - from:
+        - podSelector:
+            matchLabels:
+              app: load-test
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 8443
 
   # 외부 API/S3는 임시 유지하되 내부·링크로컬 주소는 이 예외에서 제외한다.
   egress:
