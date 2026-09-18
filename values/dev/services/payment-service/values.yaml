@@ -11,6 +11,28 @@ resources:
 env:
   - name: SPRING_PROFILES_ACTIVE
     value: "dev"
+  # gitops PR #59(DB/gateway-secret ExternalSecret 바인딩)와 함께 반영 필요 - 그 전까지는
+  # 이 Secret들이 존재하지 않아 크래시함(2026-09-18, sever #77 결제 API 배포 후 실제 발견).
+  - name: SPRING_DATASOURCE_URL
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: SPRING_DATASOURCE_URL
+  - name: SPRING_DATASOURCE_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: SPRING_DATASOURCE_USERNAME
+  - name: SPRING_DATASOURCE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: SPRING_DATASOURCE_PASSWORD
+  - name: INTERNAL_GATEWAY_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: gateway-secret
+        key: INTERNAL_GATEWAY_SECRET
   # OTel Java agent 기본 프로토콜(http/protobuf)이 쓰는 포트 4318로 맞춤 — 4317은 gRPC용.
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
     value: "http://tempo.observability.svc.cluster.local:4318"
