@@ -36,7 +36,6 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8080
-
   # 외부 API/S3는 임시 유지하되 내부·링크로컬 주소는 이 예외에서 제외한다.
   egress:
     - to:
@@ -112,10 +111,9 @@ networkPolicy:
       ports:
         - protocol: "TCP"
           port: 8443
-
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/payment-service
-  tag: "35d07c5d922e1e8e714e78a58afaddd4806066b4" # 긴급 원복(2026-09-18) - 강제 503 이미지가 자동 감지 실패(부팅 61초 vs 분석 윈도 타이밍 문제)로 100% stable까지 승급돼버려서 정상 이미지로 즉시 되돌림
+  tag: "4a642dd1341288f075a9170535ac832b09ce39d7" # 긴급 원복(2026-09-18) - 강제 503 이미지가 자동 감지 실패(부팅 61초 vs 분석 윈도 타이밍 문제)로 100% stable까지 승급돼버려서 정상 이미지로 즉시 되돌림
 # 카나리/블루그린 롤백 시연(2026-09-18, gitops/docs/canary-bluegreen-rollback-scenario.md
 # 설계 문서 실행 단계). payment-service는 잘못된 배포의 피해가 되돌릴 수 없는
 # 성격(중복결제/정산오류)이라 카나리로 블래스트 레디어스를 최소화 - 문제를 트래픽
@@ -134,9 +132,9 @@ canary:
     enabled: true
   steps:
     - setWeight: 20
-    - pause: { duration: 60 }
+    - pause: {duration: 60}
     - setWeight: 50
-    - pause: { duration: 60 }
+    - pause: {duration: 60}
     - setWeight: 100
 # Kafka SASL 6단계(2026-09-18). generic-service 차트의 kafka.sasl.enabled를 켜면
 # SPRING_KAFKA_SECURITY_PROTOCOL 등 5개 SASL env(kafkaSaslEnv 템플릿)가 자동
