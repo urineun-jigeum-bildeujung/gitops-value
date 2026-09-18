@@ -40,7 +40,7 @@ networkPolicy:
         - protocol: TCP
           port: 8080
 
-  # 외부 API/S3는 임시 유지하되 내부·링크로컬 주소는 이 예외에서 제외한다.
+  # 확정된 외부 목적지가 없어 인터넷 연결은 차단한다. 내부 경로만 허용한다.
   egress:
     - to:
         - namespaceSelector:
@@ -54,19 +54,6 @@ networkPolicy:
           port: 53
         - protocol: "TCP"
           port: 53
-    - to:
-        - ipBlock:
-            cidr: "0.0.0.0/0"
-            except:
-              - "0.0.0.0/8"
-              - "10.0.0.0/8"
-              - "100.64.0.0/10"
-              - "127.0.0.0/8"
-              - "169.254.0.0/16"
-              - "172.16.0.0/12"
-              - "192.168.0.0/16"
-              - "224.0.0.0/4"
-              - "240.0.0.0/4"
     - to:
         - namespaceSelector:
             matchLabels:
