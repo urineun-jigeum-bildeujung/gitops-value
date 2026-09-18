@@ -190,8 +190,10 @@ env:
       secretKeyRef:
         name: gateway-secret
         key: INTERNAL_GATEWAY_SECRET
+  # 블루그린 롤백(abort) 시연용 새 리비전 트리거(2026-09-18) - 값 자체엔 의미 없음, preview
+  # 재생성만 목적. 시연 끝나면 3600으로 되돌릴 것.
   - name: JWT_EXPIRATION_ACCESS
-    value: "3600"
+    value: "3601"
   - name: JWT_EXPIRATION_REFRESH
     value: "604800"
   # spring.data.redis.host/port 접속 정보가 application-local.yml에만 있어서(dev 프로필엔
