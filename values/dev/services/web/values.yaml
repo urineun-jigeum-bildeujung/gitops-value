@@ -4,7 +4,6 @@ externalEgress:
   allowedDomains:
     - "business.juso.go.kr"
     - "image.leechs.shop"
-
 # 내부 Ingress/Egress 제한. Public ALB → Next.js 3000 및 예정 Gateway 호출 유지.
 networkPolicy:
   enabled: true
@@ -45,7 +44,7 @@ networkPolicy:
           port: 8080
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/web
-  tag: "ed3efdc04f71f15f7c8ff4d4a831257f728c34bd" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "8f8cdf98f87cc61b06cac867b20769318e87b515" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 resources:
   requests:
     cpu: 100m
