@@ -66,6 +66,46 @@ env:
   # 가져다 씀. 소셜로그인 화면이 실제로 만들어지면 재확인 필요.
   - name: OAUTH2_FRONTEND_REDIRECT_URI
     value: "https://leechs.shop/auth/callback"
+  # 임시값(2026-09-18) — 카카오/구글 OAuth2 client-id/secret이 아직 실제로 발급/등록되지
+  # 않은 상태. application-local.yml에만 이 값들이 있고 dev 프로필엔 없어서
+  # ClientRegistrationRepository 빈을 못 만들어 매 부팅마다 크래시했음(SecurityConfig가
+  # .oauth2Login(...)을 무조건 걸어놔서 회피 불가). Spring은 부팅 시점엔 client-id/secret이
+  # "진짜 유효한지"는 검증하지 않고 문자열만 있으면 빈을 만들어주므로, mTLS 검증 등 다른
+  # 작업을 진행할 수 있게 크래시만 우선 해소하는 더미값. 실제 카카오/구글 로그인은 이
+  # 값으로는 동작하지 않음 — 실제 앱 등록 후 반드시 교체 필요
+  # ([[project_petflow_temp_placeholder_values]] 참고).
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_ID
+    value: "placeholder-kakao-client-id"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_SECRET
+    value: "placeholder-kakao-client-secret"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_REDIRECT_URI
+    value: "https://leechs.shop/api/auth/login/oauth2/code/kakao"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_AUTHORIZATION_GRANT_TYPE
+    value: "authorization_code"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_AUTHENTICATION_METHOD
+    value: "client_secret_post"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_SCOPE
+    value: "account_email"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KAKAO_AUTHORIZATION_URI
+    value: "https://kauth.kakao.com/oauth/authorize"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KAKAO_TOKEN_URI
+    value: "https://kauth.kakao.com/oauth/token"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KAKAO_USER_INFO_URI
+    value: "https://kapi.kakao.com/v2/user/me"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KAKAO_USER_NAME_ATTRIBUTE
+    value: "id"
+  # google은 Spring Security 내장 CommonOAuth2Provider라 provider.* 없이 client-id/secret만
+  # 있으면 authorization-uri 등이 자동으로 채워짐.
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID
+    value: "placeholder-google-client-id"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET
+    value: "placeholder-google-client-secret"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI
+    value: "https://leechs.shop/api/auth/login/oauth2/code/google"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_AUTHORIZATION_GRANT_TYPE
+    value: "authorization_code"
+  - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE
+    value: "email"
   # OTel Java agent 기본 프로토콜(http/protobuf)이 쓰는 포트 4318로 맞춤 — 4317은 gRPC용.
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
     value: "http://tempo.observability.svc.cluster.local:4318"
