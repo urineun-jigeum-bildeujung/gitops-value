@@ -55,17 +55,22 @@ env:
     value: "redis-master.redis.svc.cluster.local"
   - name: SPRING_DATA_REDIS_PORT
     value: "6379"
-  # Redis mTLS 4단계(2026-09-18). order-service는 이미 HTTP mTLS용 internal-mtls
+  # Redis mTLS 4단계(2026-09-18). order-service는 이미 HTTP mTLS용 internalmtls
   # SslBundle(mtls.enabled: true 위에서 만들어짐)을 갖고 있어서, 새 인증서/볼륨 없이
   # 그 번들 이름만 재사용하면 됨(Spring Boot 4.1.0 spring-boot-data-redis 모듈의
   # LettuceConnectionConfiguration이 SslBundle을 그대로 받아서 Lettuce SslOptions에
   # 꽂아주는 것까지 jar 직접 확인함). gitops PR #52(Redis 서버 tls.enabled)가
   # 머지되기 전까지는 이 값을 반영하면 안 됨 - 서버가 아직 평문이라 핸드셰이크 실패로
   # 즉시 깨짐. 클러스터 복구 시점에 PR #52와 반드시 함께 반영할 것.
+  #
+  # 번들 이름은 하이픈 없는 internalmtls를 씀(2026-09-18) - "internal-mtls"로 했다가
+  # 실제 Pod 크래시(NoSuchSslBundleException)로 발견: spring.ssl.bundle.pem.<이름>이
+  # Map 동적 키라 환경변수의 "_"→"." 변환 과정에서 하이픈이 두 단계 경로로 잘못
+  # 쪼개짐. gitops PR #57/sever #79에서 같은 이름으로 맞춤.
   - name: SPRING_DATA_REDIS_SSL_ENABLED
     value: "true"
   - name: SPRING_DATA_REDIS_SSL_BUNDLE
-    value: "internal-mtls"
+    value: "internalmtls"
   # OTel Java agent 기본 프로토콜(http/protobuf)이 쓰는 포트 4318로 맞춤 — 4317은 gRPC용.
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
     value: "http://tempo.observability.svc.cluster.local:4318"
