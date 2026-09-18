@@ -38,6 +38,14 @@ env:
       secretKeyRef:
         name: gateway-secret
         key: INTERNAL_GATEWAY_SECRET
+  # spring.kafka.bootstrap-servers가 application-local.yml에만 있어서(dev 프로필엔
+  # 없음), PaymentResultConsumer/KafkaProducerConfig가 이 프로퍼티를 못 찾아
+  # PlaceholderResolutionException으로 부팅 자체가 실패함(2026-09-18, 클러스터 복구
+  # 후 실제 크래시로 발견 — member-service breed_master, order_number_seq와 동일
+  # 유형의 반복 버그). product-service와 동일한 평문 9092 리스너를 가리킴 - Kafka
+  # SASL(6단계, 미착수)이 반영되면 그때 9093/SASL 값으로 갱신할 것.
+  - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+    value: "pet-subscription-kafka-kafka-bootstrap.kafka.svc:9092"
   # spring.sql.init.mode: always가 application-local.yml에만 있어서(dev 프로필엔 없음),
   # schema.sql(order_number_seq 시퀀스 생성)이 dev 클러스터에서 한 번도 실행 안 됐을
   # 가능성이 높음 — Spring Boot 기본값은 외부 DB(Postgres 등)엔 schema.sql을 자동
