@@ -142,8 +142,10 @@ mtls:
 # replicaCount 4 - 기본값 1로는 active/preview 전환 과정이 눈에 안 보임(문서에
 # 명시된 사전 준비 항목). 클러스터 CPU 여유가 빠듯해서(2026-09-18 확인) 문서
 # 권장값(5~10)보다 낮춤 - payment-service와 합쳐 CPU 600m로 여유 480m를 남김.
-# 블루그린 시연 재개(2026-09-18) - 노드 장애/CPU 부족 해소 확인 후(전 노드 60~70%대) 다시 4로.
-replicaCount: 4
+# 블루그린 시연 재개, 2차 조정(2026-09-18) - 4로 올렸더니 preview+active 8개 동시
+# 스케줄 요구로 클러스터가 다시 CPU 96%/Too many pods까지 몰림. 2(=preview+active 4개)로
+# 낮춤 - active/preview 전환 확인엔 2개로도 충분하고, 한 번 크게 겪은 뒤라 여유를 둠.
+replicaCount: 2
 blueGreen:
   enabled: true
   autoPromotionEnabled: false
