@@ -1,6 +1,6 @@
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/payment-service
-  tag: "e0541aeeeb39e40aec9b5f630a2e3d2da50cd9aa" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "35d07c5d922e1e8e714e78a58afaddd4806066b4" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 resources:
   requests:
     cpu: 100m
