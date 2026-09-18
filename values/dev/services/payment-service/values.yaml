@@ -155,11 +155,12 @@ env:
     value: "dev"
   # gitops PR #59(DB/gateway-secret ExternalSecret 바인딩)와 함께 반영 필요 - 그 전까지는
   # 이 Secret들이 존재하지 않아 크래시함(2026-09-18, sever #77 결제 API 배포 후 실제 발견).
+  # 카나리 롤백 시연용 의도적 장애 주입(2026-09-18, canary-bluegreen-rollback-scenario.md
+  # 실행 단계) - DB 접속을 일부러 깨서 /actuator/health가 DOWN(503)을 반환하게 만듦.
+  # AnalysisTemplate이 5xx를 감지해 Rollout을 자동 중단하는지 확인하는 용도.
+  # 시연 끝나면 원래 secretKeyRef로 되돌릴 것.
   - name: SPRING_DATASOURCE_URL
-    valueFrom:
-      secretKeyRef:
-        name: db-credentials
-        key: SPRING_DATASOURCE_URL
+    value: "jdbc:postgresql://nonexistent-host.invalid:5432/broken"
   - name: SPRING_DATASOURCE_USERNAME
     valueFrom:
       secretKeyRef:
