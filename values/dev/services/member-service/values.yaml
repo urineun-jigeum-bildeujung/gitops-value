@@ -94,6 +94,17 @@ networkPolicy:
         - protocol: "TCP"
           port: 8443
     - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "product-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-product-service"
+      ports:
+        - protocol: "TCP"
+          port: 8443
+    - to:
         - ipBlock:
             cidr: "169.254.170.23/32"
       ports:
@@ -137,6 +148,11 @@ env:
   # 패턴 — 점(.)과 대시(-)는 언더스코어 하나로 치환되어 매칭된다.
   - name: AUTH_SERVICE_URL
     value: "https://generic-service.auth-service.svc.cluster.local:8443"
+  # product-service.url 프로퍼티 오버라이드(2026-09-20, 서비스 간 mTLS 일관 적용).
+  # ProductClient는 공용 InternalFeignClientConfig를 쓰므로 이 서비스의 mtls.enabled가
+  # 켜져있으면 인증서 처리는 자동 적용된다 — 코드 변경 없이 URL만 https:8443으로 지정.
+  - name: PRODUCT_SERVICE_URL
+    value: "https://generic-service.product-service.svc.cluster.local:8443"
   - name: INTERNAL_GATEWAY_SECRET
     valueFrom:
       secretKeyRef:
