@@ -75,6 +75,11 @@ ingress:
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
     alb.ingress.kubernetes.io/success-codes: "200-399"
 # 차트 기본 ServiceMonitor는 /actuator/prometheus(Spring Boot 전용) 경로를 스크랩한다.
-# web은 그런 엔드포인트가 없어서 꺼둔다 — 프론트엔드용 메트릭이 생기면 그때 다시 켠다.
+# web(Next.js)은 그 경로가 없어서 path를 /metrics로 바꿔 미리 켜둔다(2026-09-21) — SSR
+# 리소스 지표(메모리/응답지연) 요청에 대응. 프론트가 아직 prom-client 등으로 이 경로에
+# 실제 메트릭을 노출하지 않은 상태라, 지금은 Prometheus가 스크랩 실패(404/connection
+# refused)로만 찍히고 넘어간다 — 다른 기능에 영향 없는 무해한 상태. 프론트가 /metrics
+# 엔드포인트를 실제로 추가하면 이 설정 변경 없이 바로 수집되기 시작한다.
 metrics:
-  enabled: false
+  enabled: true
+  path: /metrics
