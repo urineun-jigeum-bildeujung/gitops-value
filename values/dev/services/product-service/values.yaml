@@ -133,10 +133,7 @@ env:
   - name: SPRING_PROFILES_ACTIVE
     value: "dev"
   - name: SPRING_DATASOURCE_URL
-    valueFrom:
-      secretKeyRef:
-        name: db-credentials
-        key: SPRING_DATASOURCE_URL
+    value: "jdbc:postgresql://petflow-db-rw.database.svc.cluster.local:5432/product_db"
   - name: SPRING_DATASOURCE_USERNAME
     valueFrom:
       secretKeyRef:
@@ -147,6 +144,8 @@ env:
       secretKeyRef:
         name: db-credentials
         key: SPRING_DATASOURCE_PASSWORD
+  - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+    value: "update"
   # Kafka SASL 6단계(2026-09-18) 반영으로 9093(SASL 리스너)로 갱신.
   - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
     value: "pet-subscription-kafka-kafka-bootstrap.kafka.svc:9093"

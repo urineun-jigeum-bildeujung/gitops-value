@@ -143,10 +143,7 @@ env:
   - name: SPRING_PROFILES_ACTIVE
     value: "dev"
   - name: SPRING_DATASOURCE_URL
-    valueFrom:
-      secretKeyRef:
-        name: db-credentials
-        key: SPRING_DATASOURCE_URL
+    value: "jdbc:postgresql://petflow-db-rw.database.svc.cluster.local:5432/auth_db"
   - name: SPRING_DATASOURCE_USERNAME
     valueFrom:
       secretKeyRef:
@@ -157,6 +154,10 @@ env:
       secretKeyRef:
         name: db-credentials
         key: SPRING_DATASOURCE_PASSWORD
+  # dev는 Flyway/Liquibase가 없으므로 배포 이미지의 JPA Entity로 스키마를 유지한다.
+  # create/create-drop은 재시작 시 데이터 손실 위험이 있어 사용하지 않는다.
+  - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+    value: "update"
   # member-service.url 프로퍼티 오버라이드. SystemEnvironmentPropertySource는 점(.)과
   # 대시(-) 둘 다 언더스코어 하나로 치환해서 매칭하므로 그냥 MEMBER_SERVICE_URL이 맞다
   # (처음에 __로 시도했다가 실제 로그로 확인 후 정정, 2026-09-14).

@@ -150,10 +150,7 @@ env:
   # gitops PR #59(DB/gateway-secret ExternalSecret 바인딩)와 함께 반영 필요 - 그 전까지는
   # 이 Secret들이 존재하지 않아 크래시함(2026-09-18, sever #77 결제 API 배포 후 실제 발견).
   - name: SPRING_DATASOURCE_URL
-    valueFrom:
-      secretKeyRef:
-        name: db-credentials
-        key: SPRING_DATASOURCE_URL
+    value: "jdbc:postgresql://petflow-db-rw.database.svc.cluster.local:5432/payment_db"
   - name: SPRING_DATASOURCE_USERNAME
     valueFrom:
       secretKeyRef:
@@ -164,6 +161,8 @@ env:
       secretKeyRef:
         name: db-credentials
         key: SPRING_DATASOURCE_PASSWORD
+  - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+    value: "update"
   - name: INTERNAL_GATEWAY_SECRET
     valueFrom:
       secretKeyRef:
