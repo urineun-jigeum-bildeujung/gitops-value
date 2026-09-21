@@ -130,10 +130,7 @@ env:
   - name: SPRING_PROFILES_ACTIVE
     value: "dev"
   - name: SPRING_DATASOURCE_URL
-    valueFrom:
-      secretKeyRef:
-        name: db-credentials
-        key: SPRING_DATASOURCE_URL
+    value: "jdbc:postgresql://petflow-db-rw.database.svc.cluster.local:5432/member_db"
   - name: SPRING_DATASOURCE_USERNAME
     valueFrom:
       secretKeyRef:
@@ -144,6 +141,8 @@ env:
       secretKeyRef:
         name: db-credentials
         key: SPRING_DATASOURCE_PASSWORD
+  - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+    value: "update"
   # auth-service.url 프로퍼티 오버라이드. auth-service의 MEMBER_SERVICE_URL과 동일한
   # 패턴 — 점(.)과 대시(-)는 언더스코어 하나로 치환되어 매칭된다.
   - name: AUTH_SERVICE_URL
