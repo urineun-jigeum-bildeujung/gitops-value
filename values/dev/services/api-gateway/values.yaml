@@ -1,0 +1,215 @@
+# 실제 ECR 이미지가 준비되기 전까지 ApplicationSet에서 이 디렉터리를 제외한다.
+# Jenkins가 전체 Git commit SHA 태그를 기록한 뒤 별도 PR로 배포 보류를 해제한다.
+image:
+  repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/api-gateway
+  tag: "pending-ci"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+# 현재 Gateway는 Actuator health/info만 노출한다.
+metrics:
+  enabled: false
+
+# 첫 내부 통신 검증 전에는 Public ALB에 연결하지 않는다.
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+
+canary:
+  enabled: false
+
+blueGreen:
+  enabled: false
+
+# 인증서는 Backend/Redis 호출의 클라이언트 신원으로 사용하되,
+# 외부 요청 수신은 HTTP 8080을 유지한다.
+mtls:
+  enabled: true
+  server:
+    enabled: false
+
+startupProbe:
+  tcpSocket:
+    port: 8080
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 18
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8080
+    scheme: HTTP
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 6
+  successThreshold: 1
+
+# /actuator/health에는 Redis 같은 외부 의존성이 포함될 수 있으므로
+# 독립적인 liveness endpoint가 확인될 때까지 livenessProbe는 두지 않는다.
+
+env:
+  - name: SPRING_PROFILES_ACTIVE
+    value: "infra"
+  - name: AUTH_SERVICE_URL
+    value: "https://generic-service.auth-service.svc.cluster.local:8443"
+  - name: MEMBER_SERVICE_URL
+    value: "https://generic-service.member-service.svc.cluster.local:8443"
+  - name: PRODUCT_SERVICE_URL
+    value: "https://generic-service.product-service.svc.cluster.local:8443"
+  - name: ORDER_SERVICE_URL
+    value: "https://generic-service.order-service.svc.cluster.local:8443"
+  - name: PAYMENT_SERVICE_URL
+    value: "https://generic-service.payment-service.svc.cluster.local:8443"
+  - name: REVIEW_SERVICE_URL
+    value: "https://generic-service.review-service.svc.cluster.local:8443"
+  - name: NOTIFICATION_SERVICE_URL
+    value: "https://generic-service.notification-service.svc.cluster.local:8443"
+  - name: JWT_JWKS_URI
+    value: "https://generic-service.auth-service.svc.cluster.local:8443/oauth2/jwks"
+  - name: REDIS_HOST
+    value: "redis-master.redis.svc.cluster.local"
+  - name: REDIS_PORT
+    value: "6379"
+  - name: INTERNAL_GATEWAY_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: gateway-secret
+        key: INTERNAL_GATEWAY_SECRET
+  # Gateway 이미지의 OTel Java Agent가 localhost로 전송하지 않도록 내부 Tempo로 고정한다.
+  - name: OTEL_EXPORTER_OTLP_ENDPOINT
+    value: "http://tempo.observability.svc.cluster.local:4318"
+  - name: OTEL_METRICS_EXPORTER
+    value: "none"
+  - name: OTEL_LOGS_EXPORTER
+    value: "none"
+
+networkPolicy:
+  enabled: true
+  namespaceDefaultDeny: true
+  ingress:
+    # Next.js 서버의 API 프록시/SSR 호출.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "web"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-web"
+      ports:
+        - protocol: "TCP"
+          port: 8080
+    # 내부 검증용 Pod에는 이 라벨을 명시적으로 붙여야 한다.
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "network-debug"
+      ports:
+        - protocol: "TCP"
+          port: 8080
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "kube-system"
+          podSelector:
+            matchLabels:
+              k8s-app: "kube-dns"
+      ports:
+        - protocol: "UDP"
+          port: 53
+        - protocol: "TCP"
+          port: 53
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "auth-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-auth-service"
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "member-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-member-service"
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "product-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-product-service"
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "order-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-order-service"
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "payment-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-payment-service"
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "review-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-review-service"
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "notification-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-notification-service"
+      ports:
+        - protocol: "TCP"
+          port: 8443
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "redis"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "redis"
+              app.kubernetes.io/instance: "redis"
+              app.kubernetes.io/component: "master"
+      ports:
+        - protocol: "TCP"
+          port: 6379
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "observability"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "tempo"
+              app.kubernetes.io/instance: "tempo"
+      ports:
+        - protocol: "TCP"
+          port: 4318
