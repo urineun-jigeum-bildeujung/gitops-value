@@ -60,6 +60,17 @@ networkPolicy:
       ports:
         - protocol: "TCP"
           port: 4318
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "database"
+          podSelector:
+            matchLabels:
+              cnpg.io/cluster: "petflow-db"
+              cnpg.io/instanceRole: "primary"
+      ports:
+        - protocol: "TCP"
+          port: 5432
 
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/notification-service
@@ -74,6 +85,20 @@ resources:
 env:
   - name: SPRING_PROFILES_ACTIVE
     value: "dev"
+  - name: SPRING_DATASOURCE_URL
+    value: "jdbc:postgresql://petflow-db-rw.database.svc.cluster.local:5432/notification_db"
+  - name: SPRING_DATASOURCE_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: SPRING_DATASOURCE_USERNAME
+  - name: SPRING_DATASOURCE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: SPRING_DATASOURCE_PASSWORD
+  - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+    value: "update"
   # OTel Java agent 기본 프로토콜(http/protobuf)이 쓰는 포트 4318로 맞춤 — 4317은 gRPC용.
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
     value: "http://tempo.observability.svc.cluster.local:4318"
