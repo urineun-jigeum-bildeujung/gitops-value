@@ -38,6 +38,18 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8080
+    # member-service의 ReviewClient가 내부 평점 조회를 호출할 때만 허용한다.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: member-service
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: generic-service
+              app.kubernetes.io/instance: dev-member-service
+      ports:
+        - protocol: TCP
+          port: 8443
   # 내부 경로만 명시한다. 외부 HTTPS는 externalEgress 전용 프록시로만 허용한다.
   egress:
     - to:
@@ -75,6 +87,17 @@ networkPolicy:
         - protocol: "TCP"
           port: 5432
     - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "member-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-member-service"
+      ports:
+        - protocol: "TCP"
+          port: 8443
+    - to:
         - ipBlock:
             cidr: "169.254.170.23/32"
       ports:
@@ -107,6 +130,28 @@ env:
         key: SPRING_DATASOURCE_PASSWORD
   - name: SPRING_JPA_HIBERNATE_DDL_AUTO
     value: "update"
+  # common-storage 필수값. CDN URL은 코드가 "/<prefix>/..."를 덧붙이므로
+  # scheme을 포함하고 trailing slash는 두지 않는다.
+  - name: STORAGE_BUCKET
+    value: "petflow-dev-uploads"
+  - name: STORAGE_REGION
+    value: "ap-northeast-2"
+  - name: STORAGE_CLOUDFRONT_DOMAIN
+    value: "https://image.leechs.shop"
+  - name: STORAGE_PREFIX
+    value: "reviews"
+  # OpenFeign annotation placeholder는 애플리케이션 기동 시 해석된다.
+  - name: MEMBER_SERVICE_URL
+    value: "https://generic-service.member-service.svc.cluster.local:8443"
+  - name: ORDER_SERVICE_URL
+    value: "https://generic-service.order-service.svc.cluster.local:8443"
+  - name: PRODUCT_SERVICE_URL
+    value: "https://generic-service.product-service.svc.cluster.local:8443"
+  - name: INTERNAL_GATEWAY_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: gateway-secret
+        key: INTERNAL_GATEWAY_SECRET
   # OTel Java agent 기본 프로토콜(http/protobuf)이 쓰는 포트 4318로 맞춤 — 4317은 gRPC용.
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
     value: "http://tempo.observability.svc.cluster.local:4318"
