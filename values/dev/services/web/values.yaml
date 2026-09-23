@@ -54,6 +54,11 @@ resources:
 # Next.js standalone 서버가 3000번으로 뜬다 (차트 기본값 8080은 백엔드 서비스 기준).
 service:
   targetPort: 3000
+# Next.js Server Component가 클러스터 내부 Gateway를 호출할 때 사용하는 런타임 전용 주소.
+# 브라우저는 기존 same-origin /api/v1 계약을 유지한다.
+env:
+  - name: API_BASE_URL_INTERNAL
+    value: "http://generic-service.api-gateway.svc.cluster.local/api/v1"
 # Public frontend entrypoint. The AWS Load Balancer Controller creates the
 # internet-facing ALB; API Gateway can later join the same group with order 10.
 ingress:

@@ -11,9 +11,30 @@ service:
 # 현재 Gateway는 Actuator health/info만 노출한다.
 metrics:
   enabled: false
-# 첫 내부 통신 검증 전에는 Public ALB에 연결하지 않는다.
+# 기존 petflow-public IngressGroup에 API 경로만 우선순위 10으로 합류한다.
+# Actuator는 health check로만 사용하며 외부 Listener 경로에는 추가하지 않는다.
 ingress:
-  enabled: false
+  enabled: true
+  className: alb
+  host: leechs.shop
+  paths:
+    - path: /api/v1
+      pathType: Prefix
+    - path: /api/auth
+      pathType: Prefix
+  annotations:
+    alb.ingress.kubernetes.io/load-balancer-name: petflow-dev-public
+    alb.ingress.kubernetes.io/group.name: petflow-public
+    alb.ingress.kubernetes.io/group.order: "10"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:297165773875:certificate/38399d86-e76d-4323-9b3d-721b32acd2ce
+    alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/success-codes: "200"
 resources:
   requests:
     cpu: 100m
@@ -89,6 +110,15 @@ networkPolicy:
   enabled: true
   namespaceDefaultDeny: true
   ingress:
+    # Public ALB가 배치된 두 Subnet에서 Gateway HTTP 8080으로 들어오는 트래픽만 허용한다.
+    - from:
+        - ipBlock:
+            cidr: "10.0.0.0/24"
+        - ipBlock:
+            cidr: "10.0.1.0/24"
+      ports:
+        - protocol: "TCP"
+          port: 8080
     # Next.js 서버의 API 프록시/SSR 호출.
     - from:
         - namespaceSelector:
