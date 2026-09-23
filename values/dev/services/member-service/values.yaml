@@ -44,6 +44,18 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8443
+    # review-service의 MemberClient가 리뷰 작성자·반려동물 정보를 조회할 때만 허용한다.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: review-service
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: generic-service
+              app.kubernetes.io/instance: dev-review-service
+      ports:
+        - protocol: TCP
+          port: 8443
   # 내부 경로만 명시한다. 외부 HTTPS는 externalEgress 전용 프록시로만 허용한다.
   egress:
     - to:
@@ -103,6 +115,17 @@ networkPolicy:
         - protocol: "TCP"
           port: 8443
     - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "review-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-review-service"
+      ports:
+        - protocol: "TCP"
+          port: 8443
+    - to:
         - ipBlock:
             cidr: "169.254.170.23/32"
       ports:
@@ -141,6 +164,15 @@ env:
         key: SPRING_DATASOURCE_PASSWORD
   - name: SPRING_JPA_HIBERNATE_DDL_AUTO
     value: "update"
+  # common-storage의 필수 프로퍼티. profiles prefix는 Pod Identity IAM 범위와 동일하다.
+  - name: STORAGE_BUCKET
+    value: "petflow-dev-uploads"
+  - name: STORAGE_REGION
+    value: "ap-northeast-2"
+  - name: STORAGE_CLOUDFRONT_DOMAIN
+    value: "https://image.leechs.shop"
+  - name: STORAGE_PREFIX
+    value: "profiles"
   # auth-service.url 프로퍼티 오버라이드. auth-service의 MEMBER_SERVICE_URL과 동일한
   # 패턴 — 점(.)과 대시(-)는 언더스코어 하나로 치환되어 매칭된다.
   - name: AUTH_SERVICE_URL
@@ -150,6 +182,8 @@ env:
   # 켜져있으면 인증서 처리는 자동 적용된다 — 코드 변경 없이 URL만 https:8443으로 지정.
   - name: PRODUCT_SERVICE_URL
     value: "https://generic-service.product-service.svc.cluster.local:8443"
+  - name: REVIEW_SERVICE_URL
+    value: "https://generic-service.review-service.svc.cluster.local:8443"
   - name: INTERNAL_GATEWAY_SECRET
     valueFrom:
       secretKeyRef:

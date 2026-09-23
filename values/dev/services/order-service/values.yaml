@@ -168,6 +168,16 @@ env:
         key: SPRING_DATASOURCE_PASSWORD
   - name: SPRING_JPA_HIBERNATE_DDL_AUTO
     value: "update"
+  # common-storage의 필수 프로퍼티. 값은 DEV uploads Bucket/CloudFront와
+  # 서비스별 Pod Identity IAM prefix 계약에 맞춘다.
+  - name: STORAGE_BUCKET
+    value: "petflow-dev-uploads"
+  - name: STORAGE_REGION
+    value: "ap-northeast-2"
+  - name: STORAGE_CLOUDFRONT_DOMAIN
+    value: "https://image.leechs.shop"
+  - name: STORAGE_PREFIX
+    value: "orders"
   - name: INTERNAL_GATEWAY_SECRET
     valueFrom:
       secretKeyRef:
