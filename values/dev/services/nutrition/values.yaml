@@ -1,0 +1,88 @@
+# 실제 ECR 이미지가 준비되기 전까지 ApplicationSet에서 이 디렉터리를 제외한다.
+# Jenkins가 전체 Git commit SHA 태그를 기록한 뒤 별도 PR로 배포 보류를 해제한다.
+# (api-gateway values.yaml과 동일한 관례)
+image:
+  repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/nutrition
+  tag: "pending-ci"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8002
+
+# FastAPI 앱이 /health만 노출하고 /actuator/prometheus 같은 메트릭 엔드포인트가 없다.
+metrics:
+  enabled: false
+
+# 첫 내부 통신 검증 전에는 Public ALB에 연결하지 않는다.
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+
+canary:
+  enabled: false
+
+blueGreen:
+  enabled: false
+
+# 다른 서비스를 호출하지 않고(DB 연동 전), 아직 누가 mTLS로 이 서비스를 호출할지도
+# 정해지지 않아서 mTLS는 켜지 않는다(차트 기본값 그대로 false).
+
+startupProbe:
+  tcpSocket:
+    port: 8002
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 18
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8002
+    scheme: HTTP
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 6
+  successThreshold: 1
+
+networkPolicy:
+  enabled: true
+  namespaceDefaultDeny: true
+  ingress:
+    # 내부 검증용 Pod에는 이 라벨을 명시적으로 붙여야 한다.
+    # web(프론트엔드)이 이 서비스를 어떻게 호출할지(SSR 경유 여부)는 아직
+    # AI팀 답변 대기 중이라, 정해지면 web 네임스페이스발 ingress 규칙을 추가한다.
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "network-debug"
+      ports:
+        - protocol: "TCP"
+          port: 8002
+  egress:
+    # DB 연동 전이라 DNS 조회 외의 egress가 필요 없다.
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "kube-system"
+          podSelector:
+            matchLabels:
+              k8s-app: "kube-dns"
+      ports:
+        - protocol: "UDP"
+          port: 53
+        - protocol: "TCP"
+          port: 53
