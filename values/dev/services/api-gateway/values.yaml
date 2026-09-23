@@ -1,5 +1,4 @@
-# 실제 ECR 이미지가 준비되기 전까지 ApplicationSet에서 이 디렉터리를 제외한다.
-# Jenkins가 전체 Git commit SHA 태그를 기록한 뒤 별도 PR로 배포 보류를 해제한다.
+# Jenkins가 검증 후 ECR에 Push한 sever 전체 Git commit SHA 태그를 사용한다.
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/api-gateway
   tag: "7b77713bf1f30874091bee2501dbc1e31042db4b"
