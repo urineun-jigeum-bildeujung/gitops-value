@@ -2,7 +2,6 @@
 # 서비스 간 HTTP 통신을 쓰는지 여부와 무관하게 전 서비스 공통 베이스라인으로 통일한다.
 mtls:
   enabled: true
-
 # 내부 Ingress/Egress 제한. mtls.enabled=true면 SERVER_PORT가 8443으로 바뀌어
 # 실제 API 트래픽은 8443으로만 오가므로(8080은 관리/액추에이터 포트로 남음),
 # api-gateway ingress도 8443으로 맞춘다.
@@ -59,7 +58,6 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8443
-
   # 확정된 외부 목적지가 없어 인터넷 연결은 차단한다. 내부 경로만 허용한다.
   egress:
     - to:
@@ -111,10 +109,9 @@ networkPolicy:
           port: 9092
         - protocol: "TCP"
           port: 9093
-
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/product-service
-  tag: "f4328cf372a61f85fcc41f613f49ad4000b4a59b" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "c6c816443995c2f8b0e6691ad31dcecf19f5c572" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 # Kafka SASL 6단계(2026-09-18). generic-service 차트의 kafka.sasl.enabled를 켜면
 # SPRING_KAFKA_SECURITY_PROTOCOL 등 5개 SASL env(kafkaSaslEnv 템플릿)가 자동
 # 주입됨 - 여기서 직접 넣을 필요 없음. 아래 SPRING_KAFKA_BOOTSTRAP_SERVERS만

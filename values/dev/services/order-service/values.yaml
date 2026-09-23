@@ -3,7 +3,6 @@ externalEgress:
   runtime: java
   allowedDomains:
     - "petflow-dev-uploads.s3.ap-northeast-2.amazonaws.com"
-
 # 내부 Ingress/Egress 제한. mTLS・SASL 설정은 변경하지 않는다.
 networkPolicy:
   enabled: true
@@ -45,7 +44,6 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8443
-
   # 확정된 외부 목적지가 없어 인터넷 연결은 차단한다. 내부 경로만 허용한다.
   egress:
     - to:
@@ -130,7 +128,7 @@ networkPolicy:
           port: 8080
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/order-service
-  tag: "b00f5931146c5bf8f7fa224255e4051df972a92d" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "c6c816443995c2f8b0e6691ad31dcecf19f5c572" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 # 서비스 간 mTLS 4단계 검증 대상(2026-09-17). order-service는 Feign으로 다른 서비스를
 # 호출하는 코드가 없어서 sever #73(Feign 클라이언트 mTLS 설정) 머지를 기다릴 필요
 # 없이 먼저 켤 수 있음 — server.ssl.*/spring.ssl.bundle.pem.*는 Spring Boot 자체

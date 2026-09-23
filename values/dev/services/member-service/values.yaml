@@ -3,7 +3,6 @@ externalEgress:
   runtime: java
   allowedDomains:
     - "petflow-dev-uploads.s3.ap-northeast-2.amazonaws.com"
-
 # 내부 Ingress/Egress 제한. mTLS・SASL 설정은 변경하지 않는다.
 networkPolicy:
   enabled: true
@@ -45,7 +44,6 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8443
-
   # 내부 경로만 명시한다. 외부 HTTPS는 externalEgress 전용 프록시로만 허용한다.
   egress:
     - to:
@@ -112,7 +110,7 @@ networkPolicy:
           port: 80
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/member-service
-  tag: "7b0d1ec421012778cad4dc7f758c5ee4d8323e72" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "c6c816443995c2f8b0e6691ad31dcecf19f5c572" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 # 서비스 간 mTLS 5단계(2026-09-18). member-service -> auth-service Feign 호출(AuthClient)이
 # 실제로 있어서 order-service와 달리 sever #73(Feign 클라이언트 mTLS 설정) 머지 및 재배포가
 # 선행되어야 함 — auth-service의 mtls.enabled와 반드시 같은 타이밍에 켜져야 함(자세한 이유는
