@@ -2,24 +2,19 @@
 # Jenkins가 전체 Git commit SHA 태그를 기록한 뒤 별도 PR로 배포 보류를 해제한다.
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/api-gateway
-  tag: "pending-ci"
+  tag: "7b77713bf1f30874091bee2501dbc1e31042db4b"
   pullPolicy: IfNotPresent
-
 replicaCount: 1
-
 service:
   type: ClusterIP
   port: 80
   targetPort: 8080
-
 # 현재 Gateway는 Actuator health/info만 노출한다.
 metrics:
   enabled: false
-
 # 첫 내부 통신 검증 전에는 Public ALB에 연결하지 않는다.
 ingress:
   enabled: false
-
 resources:
   requests:
     cpu: 100m
@@ -27,30 +22,24 @@ resources:
   limits:
     cpu: 500m
     memory: 512Mi
-
 autoscaling:
   enabled: false
-
 canary:
   enabled: false
-
 blueGreen:
   enabled: false
-
 # 인증서는 Backend/Redis 호출의 클라이언트 신원으로 사용하되,
 # 외부 요청 수신은 HTTP 8080을 유지한다.
 mtls:
   enabled: true
   server:
     enabled: false
-
 startupProbe:
   tcpSocket:
     port: 8080
   periodSeconds: 10
   timeoutSeconds: 3
   failureThreshold: 18
-
 readinessProbe:
   httpGet:
     path: /actuator/health
@@ -60,10 +49,8 @@ readinessProbe:
   timeoutSeconds: 3
   failureThreshold: 6
   successThreshold: 1
-
 # /actuator/health에는 Redis 같은 외부 의존성이 포함될 수 있으므로
 # 독립적인 liveness endpoint가 확인될 때까지 livenessProbe는 두지 않는다.
-
 env:
   - name: SPRING_PROFILES_ACTIVE
     value: "infra"
@@ -99,7 +86,6 @@ env:
     value: "none"
   - name: OTEL_LOGS_EXPORTER
     value: "none"
-
 networkPolicy:
   enabled: true
   namespaceDefaultDeny: true
