@@ -111,7 +111,7 @@ networkPolicy:
           port: 9093
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/product-service
-  tag: "c6c816443995c2f8b0e6691ad31dcecf19f5c572" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "0497001e943f9024a42ad9151ab588f00078df8b" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 # Kafka SASL 6단계(2026-09-18). generic-service 차트의 kafka.sasl.enabled를 켜면
 # SPRING_KAFKA_SECURITY_PROTOCOL 등 5개 SASL env(kafkaSaslEnv 템플릿)가 자동
 # 주입됨 - 여기서 직접 넣을 필요 없음. 아래 SPRING_KAFKA_BOOTSTRAP_SERVERS만

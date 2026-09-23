@@ -1,7 +1,7 @@
 # Jenkins가 검증 후 ECR에 Push한 sever 전체 Git commit SHA 태그를 사용한다.
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/api-gateway
-  tag: "c6c816443995c2f8b0e6691ad31dcecf19f5c572"
+  tag: "0497001e943f9024a42ad9151ab588f00078df8b"
   pullPolicy: IfNotPresent
 replicaCount: 1
 service:

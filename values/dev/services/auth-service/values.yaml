@@ -107,7 +107,7 @@ networkPolicy:
           port: 8443
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/auth-service
-  tag: "c6c816443995c2f8b0e6691ad31dcecf19f5c572" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "0497001e943f9024a42ad9151ab588f00078df8b" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 # 서비스 간 mTLS 5단계(2026-09-18). auth-service -> member-service Feign 호출(MemberClient)이
 # 실제로 있어서 order-service와 달리 sever #73(Feign 클라이언트 mTLS 설정) 머지 및 재배포가
 # 선행되어야 함 — 그 전에 이 mtls.enabled/MEMBER_SERVICE_URL만 먼저 적용하면 Feign이 아직
