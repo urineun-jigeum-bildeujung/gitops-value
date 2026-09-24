@@ -184,6 +184,12 @@ env:
   # Kafka SASL 6단계(2026-09-18) 반영으로 9093(SASL 리스너)로 갱신.
   - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
     value: "pet-subscription-kafka-kafka-bootstrap.kafka.svc:9093"
+  # KafkaConsumerConfig와 PaymentCancellationConsumer가 함께 사용하는 기존 계약.
+  # 새 group-id를 임의로 만들지 않고 application-local.yml 및 @KafkaListener의
+  # payment-service.refund-consumer와 동일하게 유지한다. 최초 기동 시 기존 group
+  # offset이 없으므로 코드의 auto.offset.reset=earliest가 적용될 수 있다.
+  - name: SPRING_KAFKA_CONSUMER_GROUP_ID
+    value: "payment-service.refund-consumer"
   # OTel Java agent 기본 프로토콜(http/protobuf)이 쓰는 포트 4318로 맞춤 — 4317은 gRPC용.
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
     value: "http://tempo.observability.svc.cluster.local:4318"
