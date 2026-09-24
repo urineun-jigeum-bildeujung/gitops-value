@@ -3,7 +3,18 @@ image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/api-gateway
   tag: "0497001e943f9024a42ad9151ab588f00078df8b"
   pullPolicy: IfNotPresent
-replicaCount: 1
+# 단일 Worker 장애가 Public ALB의 healthy target 0으로 이어지지 않도록 2개를 유지한다.
+replicaCount: 2
+# 공통 차트의 선택적 affinity 지원 PR이 먼저 병합되어야 한다.
+# required anti-affinity로 두 Gateway Pod의 서로 다른 hostname 배치를 강제한다.
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: generic-service
+            app.kubernetes.io/instance: dev-api-gateway
+        topologyKey: kubernetes.io/hostname
 service:
   type: ClusterIP
   port: 80
