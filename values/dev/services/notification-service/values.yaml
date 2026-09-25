@@ -33,7 +33,7 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8080
-  # 확정된 외부 목적지가 없어 인터넷 연결은 차단한다. 내부 경로만 허용한다.
+  # 외부 인터넷은 차단하고, 명시한 내부 의존 경로만 허용한다.
   egress:
     - to:
         - namespaceSelector:
@@ -58,6 +58,17 @@ networkPolicy:
       ports:
         - protocol: "TCP"
           port: 4318
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "product-service"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-product-service"
+      ports:
+        - protocol: "TCP"
+          port: 8443
     - to:
         - namespaceSelector:
             matchLabels:
@@ -96,6 +107,13 @@ env:
         key: SPRING_DATASOURCE_PASSWORD
   - name: SPRING_JPA_HIBERNATE_DDL_AUTO
     value: "update"
+  - name: PRODUCT_SERVICE_URL
+    value: "https://generic-service.product-service.svc.cluster.local:8443"
+  - name: INTERNAL_GATEWAY_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: gateway-secret
+        key: INTERNAL_GATEWAY_SECRET
   # OTel Java agent 기본 프로토콜(http/protobuf)이 쓰는 포트 4318로 맞춤 — 4317은 gRPC용.
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
     value: "http://tempo.observability.svc.cluster.local:4318"
