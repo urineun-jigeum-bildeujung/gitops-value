@@ -183,6 +183,12 @@ env:
     value: "redis-master.redis.svc.cluster.local"
   - name: SPRING_DATA_REDIS_PORT
     value: "6379"
+  # Redis는 internal CA 인증서로 TLS와 client 인증을 강제한다. generic-service chart가
+  # 마운트한 /etc/mtls 인증서의 internalmtls bundle을 Spring Data Redis도 재사용한다.
+  - name: SPRING_DATA_REDIS_SSL_ENABLED
+    value: "true"
+  - name: SPRING_DATA_REDIS_SSL_BUNDLE
+    value: "internalmtls"
   # 임시 추정값(2026-09-16) — 프론트엔드가 아직 /auth/callback 페이지를 안 만든 상태라
   # 확정된 값 아님. web README(src/views/login/README.md)에 적힌 계획 경로를 그대로
   # 가져다 씀. 소셜로그인 화면이 실제로 만들어지면 재확인 필요.
