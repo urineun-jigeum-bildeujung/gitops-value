@@ -59,6 +59,12 @@ service:
 env:
   - name: API_BASE_URL_INTERNAL
     value: "http://generic-service.api-gateway.svc.cluster.local/api/v1"
+  # 주소검색 승인키는 Next.js 서버 Route Handler에서만 읽는다. 브라우저 번들에는 넣지 않는다.
+  - name: JUSO_CONFM_KEY
+    valueFrom:
+      secretKeyRef:
+        name: juso-credentials
+        key: JUSO_CONFM_KEY
 # Public frontend entrypoint. The AWS Load Balancer Controller creates the
 # internet-facing ALB; API Gateway can later join the same group with order 10.
 ingress:
