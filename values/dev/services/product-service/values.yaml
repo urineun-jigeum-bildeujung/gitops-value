@@ -45,6 +45,18 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8080
+    # notification-service의 ProductClient(Feign) 타임딜 조회를 mTLS 8443으로 허용.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: notification-service
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: generic-service
+              app.kubernetes.io/instance: dev-notification-service
+      ports:
+        - protocol: TCP
+          port: 8443
     # member-service ProductClient(Feign) 호출. 양쪽 다 mtls.enabled=true라 인증서
     # 처리는 공용 InternalFeignClientConfig가 자동 적용 — 코드 변경 없이 8443만 허용.
     - from:
