@@ -183,6 +183,13 @@ env:
     value: "redis-master.redis.svc.cluster.local"
   - name: SPRING_DATA_REDIS_PORT
     value: "6379"
+  - name: SPRING_DATA_REDIS_USERNAME
+    value: "petflow-app"
+  - name: SPRING_DATA_REDIS_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: redis-app-credentials
+        key: password
   # Redis는 internal CA 인증서로 TLS와 client 인증을 강제한다. generic-service chart가
   # 마운트한 /etc/mtls 인증서의 internalmtls bundle을 Spring Data Redis도 재사용한다.
   - name: SPRING_DATA_REDIS_SSL_ENABLED

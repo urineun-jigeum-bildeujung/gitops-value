@@ -213,6 +213,13 @@ env:
     value: "redis-master.redis.svc.cluster.local"
   - name: SPRING_DATA_REDIS_PORT
     value: "6379"
+  - name: SPRING_DATA_REDIS_USERNAME
+    value: "petflow-app"
+  - name: SPRING_DATA_REDIS_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: redis-app-credentials
+        key: password
   # Redis mTLS 4단계(2026-09-18). order-service는 이미 HTTP mTLS용 internalmtls
   # SslBundle(mtls.enabled: true 위에서 만들어짐)을 갖고 있어서, 새 인증서/볼륨 없이
   # 그 번들 이름만 재사용하면 됨(Spring Boot 4.1.0 spring-boot-data-redis 모듈의

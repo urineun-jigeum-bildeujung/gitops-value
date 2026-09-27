@@ -105,6 +105,13 @@ env:
     value: "redis-master.redis.svc.cluster.local"
   - name: REDIS_PORT
     value: "6379"
+  - name: SPRING_DATA_REDIS_USERNAME
+    value: "petflow-app"
+  - name: SPRING_DATA_REDIS_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: redis-app-credentials
+        key: password
   - name: INTERNAL_GATEWAY_SECRET
     valueFrom:
       secretKeyRef:
