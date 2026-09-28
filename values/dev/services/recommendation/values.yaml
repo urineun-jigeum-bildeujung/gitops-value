@@ -1,0 +1,109 @@
+# 실제 ECR 이미지가 준비되기 전까지 Jenkins 첫 빌드 전 placeholder 태그를 쓴다.
+# Jenkins가 첫 빌드에서 전체 Git commit SHA로 태그를 갱신한다.
+# (nutrition/api-gateway values.yaml과 동일한 관례)
+image:
+  repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/recommendation
+  tag: "pending-ci"
+  pullPolicy: IfNotPresent
+replicaCount: 1
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+# FastAPI 앱이 /health만 노출하고 /actuator/prometheus 같은 메트릭 엔드포인트가 없다.
+metrics:
+  enabled: false
+# 첫 내부 통신 검증 전에는 Public ALB에 연결하지 않는다.
+ingress:
+  enabled: false
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+autoscaling:
+  enabled: false
+canary:
+  enabled: false
+blueGreen:
+  enabled: false
+startupProbe:
+  tcpSocket:
+    port: 8000
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 18
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+    scheme: HTTP
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 6
+  successThreshold: 1
+networkPolicy:
+  enabled: true
+  namespaceDefaultDeny: true
+  ingress:
+    # api-gateway가 /recommend/* 경로를 이 서비스로 라우팅한다.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: api-gateway
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: generic-service
+              app.kubernetes.io/instance: dev-api-gateway
+      ports:
+        - protocol: TCP
+          port: 8000
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "kube-system"
+          podSelector:
+            matchLabels:
+              k8s-app: "kube-dns"
+      ports:
+        - protocol: "UDP"
+          port: 53
+        - protocol: "TCP"
+          port: 53
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "database"
+          podSelector:
+            matchLabels:
+              cnpg.io/cluster: "petflow-db"
+              cnpg.io/instanceRole: "primary"
+      ports:
+        - protocol: "TCP"
+          port: 5432
+env:
+  - name: USE_DUMMY_DATA
+    value: "false"
+  - name: MEMBER_DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: MEMBER_DATABASE_URL
+  - name: PRODUCT_DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: PRODUCT_DATABASE_URL
+  - name: REVIEW_DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: REVIEW_DATABASE_URL
+  - name: ORDER_DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: db-credentials
+        key: ORDER_DATABASE_URL
