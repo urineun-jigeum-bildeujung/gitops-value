@@ -149,6 +149,8 @@ env:
   # 이 Secret들이 존재하지 않아 크래시함(2026-09-18, sever #77 결제 API 배포 후 실제 발견).
   - name: SPRING_DATASOURCE_URL
     value: "jdbc:postgresql://petflow-db-rw.database.svc.cluster.local:5432/payment_db"
+  - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+    value: "5"
   - name: SPRING_DATASOURCE_USERNAME
     valueFrom:
       secretKeyRef:
