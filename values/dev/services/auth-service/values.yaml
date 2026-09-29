@@ -142,6 +142,8 @@ env:
     value: "dev"
   - name: SPRING_DATASOURCE_URL
     value: "jdbc:postgresql://petflow-db-rw.database.svc.cluster.local:5432/auth_db"
+  - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+    value: "5"
   - name: SPRING_DATASOURCE_USERNAME
     valueFrom:
       secretKeyRef:
