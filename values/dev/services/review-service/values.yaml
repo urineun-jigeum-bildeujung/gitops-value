@@ -106,6 +106,13 @@ networkPolicy:
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/review-service
   tag: "ed4b8526111b008f3d2a7397ff565d377bb51dcd" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+replicaCount: 2
+deployment:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
 resources:
   requests:
     cpu: 100m
@@ -118,6 +125,8 @@ env:
     value: "dev"
   - name: SPRING_DATASOURCE_URL
     value: "jdbc:postgresql://petflow-db-rw.database.svc.cluster.local:5432/review_db"
+  - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+    value: "5"
   - name: SPRING_DATASOURCE_USERNAME
     valueFrom:
       secretKeyRef:
