@@ -183,6 +183,8 @@ resources:
 env:
   - name: SPRING_PROFILES_ACTIVE
     value: "dev"
+  - name: MEMBER_SERVICE_BASE_URL
+    value: "https://generic-service.member-service.svc.cluster.local:8443"
   - name: PRODUCT_SERVICE_BASE_URL
     value: "https://generic-service.product-service.svc.cluster.local:8443"
   - name: SPRING_DATASOURCE_URL

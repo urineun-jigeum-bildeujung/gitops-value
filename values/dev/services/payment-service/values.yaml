@@ -145,6 +145,8 @@ resources:
 env:
   - name: SPRING_PROFILES_ACTIVE
     value: "dev"
+  - name: ORDER_SERVICE_BASE_URL
+    value: "https://generic-service.order-service.svc.cluster.local:8443"
   # gitops PR #59(DB/gateway-secret ExternalSecret 바인딩)와 함께 반영 필요 - 그 전까지는
   # 이 Secret들이 존재하지 않아 크래시함(2026-09-18, sever #77 결제 API 배포 후 실제 발견).
   - name: SPRING_DATASOURCE_URL
