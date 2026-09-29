@@ -130,13 +130,16 @@ blueGreen:
   enabled: true
   autoPromotionEnabled: false
   scaleDownDelaySeconds: 30
+# JVM 힙/Metaspace 상한 미설정 상태에서 512Mi가 실사용 baseline과 거의 붙어있어서
+# order-service가 실제로 3회 OOMKilled됨(2026-09-29). JVM 튜닝(gitops#109)과
+# 별개의 안전 여유분으로 상향 — 7개 서비스 전부 동일 적용.
 resources:
   requests:
     cpu: 100m
     memory: 128Mi
   limits:
     cpu: 500m
-    memory: 512Mi
+    memory: 768Mi
 env:
   - name: SPRING_PROFILES_ACTIVE
     value: "dev"
