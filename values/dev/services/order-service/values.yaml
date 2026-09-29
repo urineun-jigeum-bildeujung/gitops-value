@@ -165,7 +165,9 @@ env:
   - name: SPRING_DATASOURCE_URL
     value: "jdbc:postgresql://petflow-db-rw.database.svc.cluster.local:5432/order_db"
   - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
-    value: "5"
+    value: "3"
+  - name: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+    value: "1"
   - name: SPRING_DATASOURCE_USERNAME
     valueFrom:
       secretKeyRef:
