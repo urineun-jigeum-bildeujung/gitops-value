@@ -56,6 +56,18 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8443
+    # order-service의 배송지 조회 내부 API 호출만 허용한다.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: order-service
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: generic-service
+              app.kubernetes.io/instance: dev-order-service
+      ports:
+        - protocol: TCP
+          port: 8443
   # 내부 경로만 명시한다. 외부 HTTPS는 externalEgress 전용 프록시로만 허용한다.
   egress:
     - to:

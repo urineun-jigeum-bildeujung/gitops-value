@@ -70,6 +70,18 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 8443
+    # review-service의 ProductClient가 리뷰 대상 상품을 조회할 때만 허용한다.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: review-service
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: generic-service
+              app.kubernetes.io/instance: dev-review-service
+      ports:
+        - protocol: TCP
+          port: 8443
   # 확정된 외부 목적지가 없어 인터넷 연결은 차단한다. 내부 경로만 허용한다.
   egress:
     - to:
