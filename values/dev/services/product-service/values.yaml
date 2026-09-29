@@ -44,7 +44,7 @@ networkPolicy:
               app.kubernetes.io/instance: dev-order-service
       ports:
         - protocol: TCP
-          port: 8080
+          port: 8443
     # notification-service의 ProductClient(Feign) 타임딜 조회를 mTLS 8443으로 허용.
     - from:
         - namespaceSelector:
