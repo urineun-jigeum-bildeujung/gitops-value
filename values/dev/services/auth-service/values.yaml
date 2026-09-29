@@ -156,6 +156,12 @@ env:
   # create/create-drop은 재시작 시 데이터 손실 위험이 있어 사용하지 않는다.
   - name: SPRING_JPA_HIBERNATE_DDL_AUTO
     value: "update"
+  # Flyway V1은 기존 auth_db 스키마의 기준선이다. 기존 테이블은 있지만
+  # flyway_schema_history가 없는 dev DB를 최초 마이그레이션에서 인식시킨다.
+  - name: SPRING_FLYWAY_BASELINE_ON_MIGRATE
+    value: "true"
+  - name: SPRING_FLYWAY_BASELINE_VERSION
+    value: "1"
   # member-service.url 프로퍼티 오버라이드. SystemEnvironmentPropertySource는 점(.)과
   # 대시(-) 둘 다 언더스코어 하나로 치환해서 매칭하므로 그냥 MEMBER_SERVICE_URL이 맞다
   # (처음에 __로 시도했다가 실제 로그로 확인 후 정정, 2026-09-14).
