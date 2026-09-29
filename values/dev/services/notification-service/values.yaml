@@ -89,6 +89,12 @@ networkPolicy:
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/notification-service
   tag: "28c083395e54b7209292e09efb72eea94cea0419" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+deployment:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
 resources:
   requests:
     cpu: 100m
@@ -118,6 +124,8 @@ env:
     value: '{"fcm":{"credentials-path":"/etc/fcm/service-account.json"}}'
   - name: SPRING_DATASOURCE_URL
     value: "jdbc:postgresql://petflow-db-rw.database.svc.cluster.local:5432/notification_db"
+  - name: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+    value: "5"
   - name: SPRING_DATASOURCE_USERNAME
     valueFrom:
       secretKeyRef:
