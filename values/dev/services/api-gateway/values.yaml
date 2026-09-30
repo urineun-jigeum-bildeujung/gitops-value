@@ -19,9 +19,9 @@ service:
   type: ClusterIP
   port: 80
   targetPort: 8080
-# 현재 Gateway는 Actuator health/info만 노출한다.
-metrics:
-  enabled: false
+# 2026-09-30: sever#187에서 micrometer-registry-prometheus 추가 +
+# /actuator/prometheus 노출 — 차트 디폴트(enabled: true)를 그대로 쓰면 되므로
+# 이 서비스만 꺼두던 오버라이드를 제거한다.
 # 기존 petflow-public IngressGroup에 API 경로만 우선순위 10으로 합류한다.
 # Actuator는 health check로만 사용하며 외부 Listener 경로에는 추가하지 않는다.
 ingress:
@@ -134,6 +134,19 @@ networkPolicy:
             cidr: "10.0.0.0/24"
         - ipBlock:
             cidr: "10.0.1.0/24"
+      ports:
+        - protocol: "TCP"
+          port: 8080
+    # Prometheus가 /actuator/prometheus를 스크레이프하러 들어오는 트래픽 허용
+    # (product-service 등 다른 서비스와 동일 패턴).
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: observability
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+              app.kubernetes.io/instance: kube-prometheus-stack-prometheus
       ports:
         - protocol: "TCP"
           port: 8080
