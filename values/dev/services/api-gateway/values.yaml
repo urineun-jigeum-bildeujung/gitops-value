@@ -99,6 +99,8 @@ env:
     value: "https://generic-service.review-service.svc.cluster.local:8443"
   - name: NOTIFICATION_SERVICE_URL
     value: "https://generic-service.notification-service.svc.cluster.local:8443"
+  - name: NUTRITION_SERVICE_URL
+    value: "http://generic-service.nutrition.svc.cluster.local:8002"
   - name: JWT_JWKS_URI
     value: "https://generic-service.auth-service.svc.cluster.local:8443/oauth2/jwks"
   - name: REDIS_HOST
@@ -223,6 +225,17 @@ networkPolicy:
       ports:
         - protocol: "TCP"
           port: 8443
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "nutrition"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-nutrition"
+      ports:
+        - protocol: "TCP"
+          port: 8002
     - to:
         - namespaceSelector:
             matchLabels:
