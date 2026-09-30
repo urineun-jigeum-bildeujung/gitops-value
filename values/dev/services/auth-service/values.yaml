@@ -126,6 +126,31 @@ mtls:
 # 시연 완료 후 원복(2026-09-18) - 시연 중엔 active/preview 전환이 보이도록 2~4로
 # 올렸었음. blueGreen.enabled 자체는 GitOps+카나리 미션 요구사항 증빙 목적으로 유지.
 replicaCount: 1
+autoscaling:
+  mode: hpa
+  resourceName: auth-service-hpa
+  minReplicas: 2
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 60
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60
+podDisruptionBudget:
+  enabled: true
+  name: auth-service-pdb
+  maxUnavailable: 1
+  selectorLabels:
+    app.kubernetes.io/name: generic-service
 blueGreen:
   enabled: true
   autoPromotionEnabled: false
