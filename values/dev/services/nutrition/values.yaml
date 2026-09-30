@@ -2,7 +2,7 @@
 # image.tag는 AI Jenkins가 develop real deploy에서 ECR push 후 자동 갱신하므로 수동 수정하지 않는다.
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/nutrition
-  tag: "1f1d3d4fc31615fabd518abe685c07099b735917"
+  tag: "1b1b3b930a2a3c02ed86b2ad6c095a402311846d"
   pullPolicy: IfNotPresent
 replicaCount: 1
 service:
@@ -46,7 +46,6 @@ readinessProbe:
   timeoutSeconds: 15
   failureThreshold: 6
   successThreshold: 1
-
 livenessProbe:
   httpGet:
     path: /health
@@ -102,7 +101,6 @@ networkPolicy:
       ports:
         - protocol: "TCP"
           port: 5432
-
 env:
   - name: NUTRITION_RUNTIME_MODE
     value: "service"
