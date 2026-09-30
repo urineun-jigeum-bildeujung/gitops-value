@@ -127,7 +127,7 @@ networkPolicy:
           port: 80
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/review-service
-  tag: "eb48f6c20ccd132f436113cc59861f45dcd885b1" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "cd82dc4a2caccaf9bac4960b25911668d67c31b8" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 replicaCount: 2
 autoscaling:
   mode: hpa

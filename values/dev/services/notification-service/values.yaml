@@ -88,7 +88,7 @@ networkPolicy:
           port: 5432
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/notification-service
-  tag: "5c23dc6143e95fcd72f49cfe8b832607d890fd17" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "cd82dc4a2caccaf9bac4960b25911668d67c31b8" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 deployment:
   strategy:
     type: RollingUpdate
