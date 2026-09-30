@@ -101,6 +101,9 @@ env:
     value: "https://generic-service.notification-service.svc.cluster.local:8443"
   - name: NUTRITION_SERVICE_URL
     value: "http://generic-service.nutrition.svc.cluster.local:8002"
+  # recommendation은 FastAPI 서버라 mTLS 인증서 체계가 없음 — 평문 HTTP.
+  - name: RECOMMENDATION_SERVICE_URL
+    value: "http://generic-service.recommendation.svc.cluster.local:80"
   - name: JWT_JWKS_URI
     value: "https://generic-service.auth-service.svc.cluster.local:8443/oauth2/jwks"
   - name: REDIS_HOST
@@ -238,6 +241,18 @@ networkPolicy:
       ports:
         - protocol: "TCP"
           port: 8443
+    # recommendation은 mTLS 인증서 체계가 없는 FastAPI 서버라 별도 egress 규칙(평문 8000).
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: "recommendation"
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: "generic-service"
+              app.kubernetes.io/instance: "dev-recommendation"
+      ports:
+        - protocol: "TCP"
+          port: 8000
     - to:
         - namespaceSelector:
             matchLabels:
