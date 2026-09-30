@@ -117,6 +117,37 @@ image:
 # 스케줄 자체가 안 되는 상황 발생해서 급하게 1로 되돌림. 카나리 시연 재개 시
 # 다시 필요한 만큼만 올릴 것.
 replicaCount: 1
+autoscaling:
+  mode: keda
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 60
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60
+  keda:
+    scaledObjectName: payment-service-scaler
+    pollingInterval: 30
+    cooldownPeriod: 300
+    kafka:
+      enabled: true
+      bootstrapServers: "pet-subscription-kafka-kafka-bootstrap.kafka.svc:9093"
+      consumerGroup: "payment-service.refund-consumer"
+      topic: "order.item-cancelled"
+      # 초기 보수값. 실부하/처리시간 측정 후 조정한다.
+      lagThreshold: "10"
+      offsetResetPolicy: earliest
+      authenticationRefName: payment-service-kafka-auth
 canary:
   enabled: true
   analysis:

@@ -129,6 +129,31 @@ image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/review-service
   tag: "eb48f6c20ccd132f436113cc59861f45dcd885b1" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 replicaCount: 2
+autoscaling:
+  mode: hpa
+  resourceName: review-service-hpa
+  minReplicas: 2
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 60
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60
+podDisruptionBudget:
+  enabled: true
+  name: review-service-pdb
+  maxUnavailable: 1
+  selectorLabels:
+    app.kubernetes.io/name: generic-service
 deployment:
   strategy:
     type: RollingUpdate
