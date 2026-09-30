@@ -3,7 +3,7 @@
 # (nutrition/api-gateway values.yaml과 동일한 관례)
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/recommendation
-  tag: "67edb7fce694b009a79af95218aec4818f0315b5"
+  tag: "376e63c56c6a26110e999b9577709780c43116a5"
   pullPolicy: IfNotPresent
 replicaCount: 1
 service:
