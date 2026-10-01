@@ -92,6 +92,18 @@ networkPolicy:
       ports:
         - protocol: "TCP"
           port: 5432
+    # EKS Pod Identity Agent의 자격증명 엔드포인트(노드 로컬, link-local).
+    # boto3가 S3 Pod Identity Role의 임시 자격증명을 여기서 받아온다. 이 경로가
+    # 없으면 "Connect timeout on endpoint URL: http://169.254.170.23/v1/credentials"로
+    # 조용히 막혀서 모델 다운로드가 실패한다(2026-10-01 실제로 겪음). Pod Identity +
+    # networkPolicy.namespaceDefaultDeny를 같이 쓰는 이 프로젝트 첫 서비스라 이
+    # 규칙이 지금까지 어디에도 없었다.
+    - to:
+        - ipBlock:
+            cidr: 169.254.170.23/32
+      ports:
+        - protocol: "TCP"
+          port: 80
 env:
   - name: USE_DUMMY_DATA
     value: "false"
