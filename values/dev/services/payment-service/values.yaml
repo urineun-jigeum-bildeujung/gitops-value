@@ -209,11 +209,11 @@ env:
   # toss-payments.* 설정이 application-local.yml에만 있어서(dev 프로필엔 없음),
   # TossPaymentProperties 바인딩 자체가 실패해 부팅 크래시함(2026-09-18, sever #77
   # 결제 API 배포 후 실제 발견 - "toss-payments.base-url must use https://. 현재 값: null").
-  # 임시값 - 토스페이먼츠가 공개 문서에 배포한 샌드박스 공용 테스트 시크릿 키
+  # 임시값 - 프론트의 test_gck_docs_ 클라이언트 키와 함께 쓰는 토스 공식 샘플 시크릿 키
   # (누구나 결제 승인 테스트 가능, 실결제 불가). 팀 전용 실제 키 발급되면 교체 필요
   # ([[project_petflow_temp_placeholder_values]] 참고).
   - name: TOSS_PAYMENTS_SECRET_KEY
-    value: "test_sk_D5GePWvyJnrK0W0k6q8gLzN97Eoq"
+    value: "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6"
   # toss-payments.base-url도 위와 같은 이유로 dev 프로필엔 없음 - TossPaymentProperties의
   # https:// 검증에 걸려 secret-key만으로는 안 풀리고 이 값도 같이 필요함
   # (2026-09-18, TOSS_SECRET_KEY 추가 후 재검증 중 새로 드러남).
