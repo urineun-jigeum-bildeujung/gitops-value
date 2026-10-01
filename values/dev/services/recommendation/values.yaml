@@ -25,6 +25,14 @@ resources:
     memory: 1Gi
 autoscaling:
   enabled: false
+# DeepFM 모델 아티팩트를 이미지에 넣지 않고 기동 시 S3에서 내려받는 방식으로
+# 전환하면서 추가(2026-10-01, AI팀 요청). gitops 차트의 externalEgress가
+# java/node만 지원해서 Python 런타임 지원을 먼저 추가했다(gitops#146).
+externalEgress:
+  enabled: true
+  runtime: python
+  allowedDomains:
+    - "petflow-dev-ml-artifacts.s3.ap-northeast-2.amazonaws.com"
 canary:
   enabled: false
 blueGreen:
@@ -107,3 +115,9 @@ env:
       secretKeyRef:
         name: db-credentials
         key: ORDER_DATABASE_URL
+  - name: MODEL_S3_BUCKET
+    value: "petflow-dev-ml-artifacts"
+  # 임시값(2026-10-01) — AI팀이 실제 업로드할 버전 문자열을 아직 안 정함.
+  # 모델 업로드 후 실제 경로로 교체 필요(placeholder 추적 메모에 기록).
+  - name: MODEL_S3_PREFIX
+    value: "recommendation/deepfm/v1.0.0"
