@@ -151,7 +151,7 @@ networkPolicy:
           port: 8443
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/order-service
-  tag: "ce652bcb43a97435537c4d8c130419790189bc20" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
+  tag: "100f39852d6eb548672b7f3d32b8f41e88aeea90" # TODO: CI가 커밋 SHA 등 실제 빌드 태그를 넣도록 바뀌면 그걸로 교체
 deployment:
   strategy:
     type: RollingUpdate
