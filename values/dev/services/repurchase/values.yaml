@@ -3,7 +3,7 @@
 # 수동 Job은 serviceAccountName: generic-service를 사용한다.
 # Pod 라벨은 generic-service/dev-repurchase 또는 role: repurchase-shadow를 사용한다.
 # ServiceAccount는 gitops platform/60-cnpg-cluster에서 선행 생성한다.
-image: {pullPolicy: IfNotPresent, repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/repurchase, tag: 40bf15d529aba85e2ba5ec9ee32484327478e785}
+image: {pullPolicy: IfNotPresent, repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/repurchase, tag: 2cf8e14d3b0844c8d876d5c0db43d4a176edd1e0}
 serviceAccount:
   create: false
 deployment:
