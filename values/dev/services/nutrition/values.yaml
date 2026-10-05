@@ -2,7 +2,7 @@
 # image.tag는 AI Jenkins가 develop real deploy에서 ECR push 후 자동 갱신하므로 수동 수정하지 않는다.
 image:
   repository: 297165773875.dkr.ecr.ap-northeast-2.amazonaws.com/petflow/nutrition
-  tag: "f0c70a6cc0d1055e37e51898f3890ff8476ff5fc"
+  tag: "8f0c086ec732ced1eb653be1bb84a645821e42f9"
   pullPolicy: IfNotPresent
 replicaCount: 1
 service:
