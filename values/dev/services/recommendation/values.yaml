@@ -127,6 +127,11 @@ env:
       secretKeyRef:
         name: db-credentials
         key: ORDER_DATABASE_URL
+  - name: INTERNAL_GATEWAY_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: gateway-secret
+        key: INTERNAL_GATEWAY_SECRET
   - name: MODEL_S3_BUCKET
     value: "petflow-dev-ml-artifacts"
   # 임시값(2026-10-01) — AI팀이 실제 업로드할 버전 문자열을 아직 안 정함.
